@@ -2,7 +2,7 @@ import numpy as np
 from random import randint
 from keras. models import load_model
 
-model = load_model('/home/prometej/Workspaces/PythonWorkspace/project_chatbot/model.h5')
+model = load_model('/home/prometej/Workspaces/PythonWorkspace/chatbot-unk/model.h5')
 
 # NUM_PREDICTING = 6
 NUM_PREDICTING = randint(2, 5) # number of words generated
@@ -45,7 +45,7 @@ def select_one(choices, probs):
 		print()
 		return the_one
 
-def create_text_from_file(textfile="/home/prometej/Workspaces/PythonWorkspace/project_chatbot/sample_changed.txt"):
+def create_text_from_file(textfile="/home/prometej/Workspaces/PythonWorkspace/chatbot-unk/Resources/dataset.txt"):
 	clean_text_chunks = []
 	with open(textfile, 'r', encoding='utf-8') as text:
 		for line in text:
