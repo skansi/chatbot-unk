@@ -1,5 +1,5 @@
 from keras.layers import Dense, Activation, Flatten
-from keras.layers.recurrent import SimpleRNN
+from keras.layers.recurrent import SimpleRNN, LSTM
 from keras.models import Sequential
 import numpy as np
 from random import randint
@@ -9,8 +9,8 @@ NUM_PREDICTING = randint(2, 5) # number of words generated
 CONTEXT = 10
 NUM_HIDDEN = 50
 BATCH_SIZE = 60
-NUM_CYCLES = 250
-NUM_EPOCHS_PER_CYCLES = 50 #default 1
+NUM_CYCLES = 20
+NUM_EPOCHS_PER_CYCLES = 20 # default 1
 
 # shift the context list so that previously predicted word is in the context for the next prediction
 def shift(l, n):
@@ -28,7 +28,7 @@ def select_one(choices, probs):
 	print('\nSelected: ', index2word[the_one])
 	return the_one
 
-def create_text_from_file(textfile="/home/prometej/Workspaces/PythonWorkspace/project_chatbot/sample_changed.txt"):
+def create_text_from_file(textfile="/home/prometej/Workspaces/PythonWorkspace/chatbot-unk/Resources/dataset.txt"):
 	clean_text_chunks = []
 	with open(textfile, 'r', encoding='utf-8') as text:
 		for line in text:
@@ -62,14 +62,15 @@ for i, input_w in enumerate(input_words):
 		vectorized_labels[i, word2index[label_word[i]]] = 1
 
 model = Sequential()
-model.add(SimpleRNN(NUM_HIDDEN, return_sequences=False, input_shape=(CONTEXT, NUM_WORDS), unroll=True))
+# model.add(SimpleRNN(NUM_HIDDEN, return_sequences=False, input_shape=(CONTEXT, NUM_WORDS), unroll=True))
+model.add(LSTM(NUM_HIDDEN, activation='tanh', recurrent_activation='hard_sigmoid', input_shape=(CONTEXT, NUM_WORDS)))
 model.add(Dense(NUM_WORDS))
 model.add(Activation("softmax"))
 model.summary()
 
 model.compile(loss="mean_squared_error", optimizer="sgd")
 
-SAVE_FILE = open('/home/prometej/Workspaces/PythonWorkspace/project_chatbot/resulting_sentences.txt', 'w')
+# SAVE_FILE = open('/home/prometej/Workspaces/PythonWorkspace/chatbot-unk/Resources/resulting_sentences.txt', 'w')
 
 for cycle in range(NUM_CYCLES):
 	print(">-<" * 44)
@@ -80,7 +81,7 @@ for cycle in range(NUM_CYCLES):
 	test_words = input_words[test_index]
 
 # save model (architecture, weights, train_config(loss, optimizer), state_of_the_optimizer)
-model.save('/home/prometej/Workspaces/PythonWorkspace/project_chatbot/model.h5')
+model.save('/home/prometej/Workspaces/PythonWorkspace/chatbot-unk/model.h5')
 del model
 
 # # save model and weights
