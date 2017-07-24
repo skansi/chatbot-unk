@@ -51,6 +51,7 @@ for SOURCE in SOURCE_LIST:
     file = open(TEMP, 'w+')
     file.write(data)
 
+    # get the text of the answer from the correct letter that represents that answer
     def get_answer_text(line, a_letter):
 
         answers = re.findall('\[.*?\]', line)
@@ -64,13 +65,16 @@ for SOURCE in SOURCE_LIST:
 
         return ans
 
+    # read file line by line
     with open(TEMP, 'r+') as myfile:
         d = myfile.readlines()
 
+    # Open the destination file for appending
     with open(SAVE_FILE, 'a+') as dest:
 
         index = 0
 
+        # for every line extract question ad the letter in front of the correct answer
         while index < len(d):
             data = d[index]
             question = data.split('\"')[9]
@@ -84,7 +88,6 @@ for SOURCE in SOURCE_LIST:
 
             index += 1
 
-            # if index >= len(d):
     dest.close()
 
     # remove replace two spaces with one
