@@ -2,7 +2,7 @@ import re
 
 SOURCE = '/home/prometej/Workspaces/PythonWorkspace/chatbot-unk/Resources/Finance.txt'
 
-# all titles
+# remove all titles
 with open(SOURCE, 'r+') as myfile:
     data_whole = myfile.read()
 
@@ -12,7 +12,7 @@ data = p.sub('', data_whole)
 file = open(SOURCE, 'w+')
 file.write(data)
 
-# all square brackets and everything inside them
+# remove all square brackets and everything inside them
 with open(SOURCE, 'r+') as myfile:
     data_whole = myfile.read()
 
@@ -22,7 +22,7 @@ data = p.sub('', data_whole)
 file = open(SOURCE, 'w+')
 file.write(data)
 
-# all life span sequences
+# remove all life span sequences
 with open(SOURCE, 'r+') as myfile:
     data_whole = myfile.read()
 
@@ -32,7 +32,7 @@ data = p.sub('', data_whole)
 file = open(SOURCE, 'w+')
 file.write(data)
 
-# all years
+# remove all years
 with open(SOURCE, 'r+') as myfile:
     data_whole = myfile.read()
 
@@ -42,7 +42,7 @@ data = p.sub('', data_whole)
 file = open(SOURCE, 'w+')
 file.write(data)
 
-# all brackets and everything inside them
+# remove all brackets and everything inside them
 with open(SOURCE, 'r+') as myfile:
     data_whole = myfile.read()
 
@@ -52,7 +52,7 @@ data = p.sub('', data_whole)
 file = open(SOURCE, 'w+')
 file.write(data)
 
-# all commas
+# remove all commas
 with open(SOURCE, 'r+') as myfile:
     data_whole = myfile.read()
 
@@ -62,7 +62,7 @@ data = p.sub('', data_whole)
 file = open(SOURCE, 'w+')
 file.write(data)
 
-# replace all abbreviations
+# remove replace all abbreviations
 with open(SOURCE, 'r+') as myfile:
     data_whole = myfile.read()
 
@@ -72,7 +72,7 @@ data = p.sub('', data_whole)
 file = open(SOURCE, 'w+')
 file.write(data)
 
-# replace all abbreviations -> capital letters
+# remove replace all abbreviations -> capital letters
 with open(SOURCE, 'r+') as myfile:
     data_whole = myfile.read()
 
@@ -82,7 +82,7 @@ data = p.sub(' ', data_whole)
 file = open(SOURCE, 'w+')
 file.write(data)
 
-# check if after any dot there is no space, than add one
+# remove check if after any dot there is no space, than add one
 with open(SOURCE, 'r+') as myfile:
     data_whole = myfile.read()
 
@@ -92,7 +92,7 @@ data = p.sub('. ', data_whole)
 file = open(SOURCE, 'w+')
 file.write(data)
 
-# replace all dots with END_OF_SENTENCE symbol
+# remove replace all dots with END_OF_SENTENCE symbol
 with open(SOURCE, 'r+') as myfile:
     data_whole = myfile.read()
 
@@ -102,7 +102,7 @@ data = p.sub('$# ', data_whole)
 file = open(SOURCE, 'w+')
 file.write(data)
 
-# replace two spaces with one
+# remove replace two spaces with one
 with open(SOURCE, 'r+') as myfile:
     data_whole = myfile.read()
 
@@ -121,8 +121,3 @@ data = p.sub(' ', data_whole)
 
 file = open(SOURCE, 'w+')
 file.write(data)
-
-# with open(SOURCE, 'r+') as myfile:
-#     data = myfile.read().replace('\n', '')
-#
-# words = data.split(' ')
