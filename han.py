@@ -1,12 +1,9 @@
 from keras.models import Sequential
 from keras.layers.recurrent import *
-from keras.layers.embeddings import Embedding
-from keras.layers.wrappers import Bidirectional, TimeDistributed
+from keras.layers.embeddings import *
+from keras.layers.wrappers import *
 from keras.layers.core import *
 from keras import backend as K
-#from layers import AttentionWithContext 
-#from keras.engine.topology import Layer
-#import numpy as np
 
 class Attention(Dense):
     """
@@ -30,26 +27,19 @@ class Attention(Dense):
         # Create a trainable weight variable for this layer.
         if self.use_context:
             self.context = self.add_weight(name='context', 
-                                      shape=(self.units,1), # (self.units,)
+                                      shape=(self.units,1),
                                       initializer='glorot_uniform',
                                       trainable=True)
         super(Attention, self).build(input_shape)
 
     def call(self, inputs):
         output = super(Attention, self).call(inputs)
-        # Implements soft attention mechanism
+        # Implements a soft attention mechanism
         if self.use_context:
             output = K.dot(output, self.context)
-            #output = K.reshape(output, output.shape[:-1])
         weights = K.softmax(output)
-        return K.sum(weights*inputs, axis=1) # dim reduction step
-        """
-        # MemN2N approach
-        match = dot([output, self.context], axes=(2, 2))
-        match = Activation('softmax')(match)
-        response = add([match, inputs])
-        response = Permute((2,1))(response) # (samples, query_maxlen, story_maxlen)
-        """
+        return K.sum(weights*inputs, axis=1)
+
     def compute_output_shape(self, input_shape):
         return (input_shape[0], input_shape[-1])
 
@@ -68,9 +58,7 @@ model = Sequential()
 model.add(Embedding(input_dim=300, output_dim=HIDDEN_SIZE))
 # GRU instead of LSTM
 model.add(Bidirectional(layer=GRU(HIDDEN_SIZE, return_sequences=True), merge_mode='concat'))
-#model.add(AttentionWithContext()) # word attention
-model.add(Bidirectional(layer=GRU(HIDDEN_SIZE, return_sequences=True), merge_mode='concat')) # TimeDistributed???
-#model.add(AttentionWithContext()) # sentence attention
+model.add(Bidirectional(layer=GRU(HIDDEN_SIZE, return_sequences=True), merge_mode='concat'))
 model.add(Attention(units=2*HIDDEN_SIZE, activation='tanh'))
 model.add(Dense(units=CHARS))
 model.add(Activation('softmax'))
