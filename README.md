@@ -8,3 +8,15 @@ Chatbot for QnA in an unknown language. There are several versions planned, rang
 # Useful links:
   - [Install Tensorflow and NVIDIA prerequisites](http://www.nvidia.com/object/gpu-accelerated-applications-tensorflow-installation.html)
   - [Install Keras](https://keras.io/): <code>sudo pip3 install keras</code>
+
+# Usage:
+  - Clone this repo
+  - Download [Wikidump](https://dumps.wikimedia.org/backup-index.html) and extract it with:
+      
+      <code>bzip2 -dk <.your_wikidump.bz2></code>
+      
+  - Clone [WikiExtractor](https://github.com/attardi/wikiextractor) and run it like this:
+      
+      <code>python3 wikiextractor/WikiExtractor.py .o <output_folder> --processes <number_of_processes_to_use> <your_wikidump.xml></code>
+  
+  - 
