@@ -1,5 +1,5 @@
 import os
-from conversion import conversion
+from formatter import conversion
 
 rootdir ='/home/prometej/Workspaces/PythonWorkspace/chatbot-unk/Resources/wikidump'
 
