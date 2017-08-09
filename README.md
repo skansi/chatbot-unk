@@ -5,11 +5,15 @@
 # chatbot-unk
 Chatbot for QnA in an unknown language. There are several versions planned, ranging from SRN, LSTM, MemNN and Q-learning. Team members: dr. sc. Sandro Skansi (team lead), dr. sc. Branimir Dropuljić, Luka Novak, Antonio Šajatović
 
-# Useful links:
+Chatbot is implemented in Python3 using [Keras](https://keras.io/) with [Tensorflow](https://www.tensorflow.org/) backend.
+
+# Prequisites installation steps:
   - [Install Tensorflow and NVIDIA prerequisites](http://www.nvidia.com/object/gpu-accelerated-applications-tensorflow-installation.html)
   - [Install Keras](https://keras.io/): <code>sudo pip3 install keras</code>
 
 # Usage:
+  ## ***Important***: <code>python --version</code> ==> Python 3.5.2
+
   - Clone this repo
   - Download [Wikidump](https://dumps.wikimedia.org/backup-index.html) and extract it with:
       
@@ -17,6 +21,14 @@ Chatbot for QnA in an unknown language. There are several versions planned, rang
       
   - Clone [WikiExtractor](https://github.com/attardi/wikiextractor) and run it like this:
       
-      <code>python3 wikiextractor/WikiExtractor.py .o <output_folder> --processes <number_of_processes_to_use> <your_wikidump.xml></code>
+      <code>python wikiextractor/WikiExtractor.py .o <output_folder> --processes <number_of_processes_to_use> <your_wikidump.xml></code>
   
-  - 
+  - Go to [create_dataset/format_files.py](https://github.com/skansi/chatbot-unk/blob/master/create_dataset/format_files.py) and run:
+  
+      <code>python format_files.py</code>
+  
+  - Go to [character_based_version/v1.0/vocab_formatter.py](https://github.com/skansi/chatbot-unk/blob/master/character_based_version/v1.0/vocab_formatter.py) and run:
+   
+      <code>python vocab_formatter.py</code>
+
+ 
