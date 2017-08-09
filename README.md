@@ -3,9 +3,11 @@
 </p>
 
 # chatbot-unk
-Chatbot for QnA in an unknown language, implemented in Python3. There are several versions planned, ranging from SRN, LSTM, MemNN and Q-learning. Team members: dr. sc. Sandro Skansi (team lead), dr. sc. Branimir Dropuljić, Luka Novak, Antonio Šajatović
+Chatbot for QnA in an unknown language. There are several versions planned, ranging from SRN, LSTM, MemNN and Q-learning. Team members: dr. sc. Sandro Skansi (team lead), dr. sc. Branimir Dropuljić, Luka Novak, Antonio Šajatović
 
-# Useful links:
+Chatbot is implemented in Python3 using [Keras](https://keras.io/) with [Tensorflow](https://www.tensorflow.org/) backend.
+
+# Prequisites installation steps:
   - [Install Tensorflow and NVIDIA prerequisites](http://www.nvidia.com/object/gpu-accelerated-applications-tensorflow-installation.html)
   - [Install Keras](https://keras.io/): <code>sudo pip3 install keras</code>
 
