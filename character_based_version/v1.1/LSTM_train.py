@@ -10,17 +10,20 @@ from keras.callbacks import ModelCheckpoint
 from keras.utils import np_utils
 from keras.models import load_model
 import os
+import pickle
 
 MODEL = '/home/prometej/Workspaces/PythonWorkspace/chatbot-unk/character_based_version/v1.0/LSTM_model.h5'
 ROOTDIR = '/home/prometej/Workspaces/PythonWorkspace/chatbot-unk/Resources/wikidump'
 VOCABULARY = '/home/prometej/Workspaces/PythonWorkspace/chatbot-unk/character_based_version/v1.0/vocab'
+CHAR_DICT = '/home/prometej/Workspaces/PythonWorkspace/chatbot-unk/character_based_version/v1.1/char_dict.pkl'
 
 # # create vocabulary with all ascii characters
 # L = list(range(128))
 # VOCAB = list(''.join(map(chr, L)))
 
+# list of all allowed characters
 with open(VOCABULARY, 'r') as v:
-    VOCAB = list(v.read())
+    VOCAB = list(v.read()).sort()
 
 # hyperparameters
 NUM_EPOCH = 50
@@ -30,11 +33,14 @@ VERBOSE = 1
 DATA_SIZE = 900000
 SEQ_LENGTH = 100
 VOCAB_SIZE = len(VOCAB)
-# VOCAB_SIZE = len(VOCAB)
 INPUT_SHAPE = ((DATA_SIZE - SEQ_LENGTH), VOCAB_SIZE)
 
 # create mapping of unique chars to integers
-char_to_int = dict((c, i) for i, c in enumerate(chars))
+char_to_int = dict((c, i) for i, c in enumerate(VOCAB))
+
+# saving dictionary for model prediction
+with open(CHAR_DICT, 'wb') as f:
+    pickle.dump(char_to_int, f, pickle.HIGHEST_PROTOCOL)
 
 # summarize the character vocabulary
 n_vocab = len(VOCAB)

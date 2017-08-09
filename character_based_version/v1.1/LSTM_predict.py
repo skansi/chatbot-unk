@@ -6,57 +6,86 @@ from keras.layers import Dropout
 from keras.layers import LSTM
 from keras.utils import np_utils
 from keras.models import load_model
+import pickle
 
-# load ascii text and covert to lowercase
-filename = "/home/prometej/Workspaces/PythonWorkspace/chatbot-unk/wiki_merged"
-raw_text = open(filename).read()
-raw_text = raw_text.lower()
+MODEL = '/home/prometej/Workspaces/PythonWorkspace/chatbot-unk/character_based_version/v1.0/LSTM_model.h5'
+VOCABULARY = '/home/prometej/Workspaces/PythonWorkspace/chatbot-unk/character_based_version/v1.0/vocab'
+CHAR_DICT = '/home/prometej/Workspaces/PythonWorkspace/chatbot-unk/character_based_version/v1.1/char_dict.pkl'
+
+NUM_CHARS_TO_GENERATE = 100
+CONTEXT_SIZE = 899900
+
+with open(CHAR_DICT, 'rb') as f:
+    char_to_int = pickle.load(f)
+
+with open(VOCABULARY, 'r') as v:
+    VOCAB = list(v.read()).sort()
+#
+# # load ascii text and covert to lowercase
+# filename = "/home/prometej/Workspaces/PythonWorkspace/chatbot-unk/wiki_merged"
+# raw_text = open(filename).read()
+# raw_text = raw_text.lower()
 
 # create mapping of unique chars to integers, and a reverse mapping
-chars = sorted(list(set(raw_text)))
-char_to_int = dict((c, i) for i, c in enumerate(chars))
-int_to_char = dict((i, c) for i, c in enumerate(chars))
+# chars = sorted(list(set(raw_text)))
+# char_to_int = dict((c, i) for i, c in enumerate(chars))
+int_to_char = dict((i, c) for i, c in enumerate(VOCAB))
 
-# summarize the loaded data
-n_chars = len(raw_text)
-n_vocab = len(chars)
-print("Total Characters: ", n_chars)
-print("Total Vocab: ", n_vocab)
+# instead of random seed, user will input the query and the network will answer
+query = input('Hi, how can I help you?\n\n')
+query = query.lower()
+query_size = len(query)
+query_list = list(query)
+query_to_int = []
+for i in range(len(query_list)):
+	query_to_int.append(char_to_int[l[i]])
 
-# prepare the dataset of input to output pairs encoded as integers
-seq_length = 100
-dataX = []
-dataY = []
+pattern = [0] * (CONTEXT_SIZE)
+pattern[CONTEXT_SIZE - query_size:] = query_to_int
+pattern = list(pattern)
 
-for i in range(0, n_chars - seq_length, 1):
-	seq_in = raw_text[i:i + seq_length]
-	seq_out = raw_text[i + seq_length]
-	dataX.append([char_to_int[char] for char in seq_in])
-	dataY.append(char_to_int[seq_out])
-n_patterns = len(dataX)
+print('\nAnswer: ')
 
-print("Total Patterns: ", n_patterns)
+# # summarize the loaded data
+# # n_chars = len(raw_text)
+# n_vocab = len(chars)
+# # print("Total Characters: ", n_chars)
+# print("Total Vocab: ", n_vocab)
+
+# # prepare the dataset of input to output pairs encoded as integers
+# seq_length = 100
+# dataX = []
+# dataY = []
+#
+# for i in range(0, n_chars - seq_length, 1):
+# 	seq_in = raw_text[i:i + seq_length]
+# 	seq_out = raw_text[i + seq_length]
+# 	dataX.append([char_to_int[char] for char in seq_in])
+# 	dataY.append(char_to_int[seq_out])
+# n_patterns = len(dataX)
+#
+# print("Total Patterns: ", n_patterns)
 
 # reshape X to be [samples, time steps, features]
-X = numpy.reshape(dataX, (n_patterns, seq_length, 1))
+# X = numpy.reshape(dataX, (n_patterns, seq_length, 1))
 
 # normalize
-X = X / float(n_vocab)
+# X = X / float(n_vocab)
 
 model = load_model('/home/prometej/Workspaces/PythonWorkspace/project_chatbot/LSTM_model.h5')
 
-# pick a random seed
-start = numpy.random.randint(0, len(dataX)-1)
-pattern = dataX[start]
-print("\n\nTest sequence:")
-print("\"", ''.join([int_to_char[value] for value in pattern]), "\"\n")
+# # pick a random seed
+# start = numpy.random.randint(0, len(dataX)-1)
+# pattern = dataX[start]
+# print("\n\nTest sequence:")
+# print("\"", ''.join([int_to_char[value] for value in pattern]), "\"\n")
 
 
 # generate characters
-for i in range(100):
+for i in range(NUM_CHARS_TO_GENERATE):
 	x = numpy.reshape(pattern, (1, len(pattern), 1))
 	x = x / float(n_vocab)
-	prediction = model.predict(x, verbose=0)
+	prediction = model.predict(x, verbose=1)
 	index = numpy.argmax(prediction)
 	result = int_to_char[index]
 	seq_in = [int_to_char[value] for value in pattern]
