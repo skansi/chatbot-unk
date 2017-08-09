@@ -9,7 +9,7 @@ Chatbot is implemented in Python3 using [Keras](https://keras.io/) with [Tensorf
 
 # Prequisites installation steps:
   - [Install Tensorflow and NVIDIA prerequisites](http://www.nvidia.com/object/gpu-accelerated-applications-tensorflow-installation.html)
-  - [Install Keras](https://keras.io/): <code>sudo pip3 install keras</code>
+  - [Install Keras](https://keras.io/#installation): <code>sudo pip3 install keras</code>
 
 # Usage:
   ## ***Important***: <code>python --version</code> ==>  Python 3.5.2
