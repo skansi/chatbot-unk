@@ -19,7 +19,7 @@ with open(CHAR_DICT, 'rb') as f:
     char_to_int = pickle.load(f)
 
 with open(VOCABULARY, 'r') as v:
-    VOCAB = list(v.read()).sort()
+    VOCAB = eval(v.read()).sort()
 #
 # # load ascii text and covert to lowercase
 # filename = "/home/prometej/Workspaces/PythonWorkspace/chatbot-unk/wiki_merged"

@@ -23,7 +23,7 @@ CHAR_DICT = '/home/prometej/Workspaces/PythonWorkspace/chatbot-unk/character_bas
 
 # list of all allowed characters
 with open(VOCABULARY, 'r') as v:
-    VOCAB = list(v.read()).sort()
+    VOCAB = eval(v.read()).sort()
 
 # hyperparameters
 NUM_EPOCH = 50
