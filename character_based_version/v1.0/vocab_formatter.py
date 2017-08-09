@@ -3,7 +3,7 @@ import os
 ROOTDIR = '/home/prometej/Workspaces/PythonWorkspace/chatbot-unk/Resources/wikidump'
 char_list = set()
 with open('/home/prometej/Workspaces/PythonWorkspace/chatbot-unk/character_based_version/v1.0/vocab', 'r') as v:
-    VOCAB = list(v.read())
+    VOCAB = eval(v.read())
 
 for subdir, dirs, files in os.walk(ROOTDIR):
     print(subdir)

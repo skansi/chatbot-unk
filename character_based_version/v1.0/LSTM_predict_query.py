@@ -10,7 +10,7 @@ from keras.models import load_model
 NUM_CHARS_TO_GENERATE = 100
 
 # load ascii text and covert to lowercase
-filename = "/home/prometej/Workspaces/PythonWorkspace/chatbot-unk/Resources/wikidump/A/AA/wiki_00"
+filename = "/home/prometej/Workspaces/PythonWorkspace/Resources/wikidump/A/AA/wiki_00"
 raw_text = open(filename).read()
 raw_text = raw_text.lower()
 
@@ -67,7 +67,7 @@ print('\nAnswer: ')
 for i in range(NUM_CHARS_TO_GENERATE):
 	x = np.reshape(pattern, (1, len(pattern), 1))
 	x = x / float(n_vocab)
-	prediction = model.predict(x, verbose=0)
+	prediction = model.predict(x, verbose=1)
 	index = np.argmax(prediction)
 	result = int_to_char[index]
 	if i == 0:
