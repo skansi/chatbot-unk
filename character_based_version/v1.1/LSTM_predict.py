@@ -6,6 +6,20 @@ from keras.layers import Dropout
 from keras.layers import LSTM
 from keras.utils import np_utils
 from keras.models import load_model
+import pickle
+
+MODEL = '/home/prometej/Workspaces/PythonWorkspace/chatbot-unk/character_based_version/v1.0/LSTM_model.h5'
+VOCABULARY = '/home/prometej/Workspaces/PythonWorkspace/chatbot-unk/character_based_version/v1.0/vocab'
+CHAR_DICT = '/home/prometej/Workspaces/PythonWorkspace/chatbot-unk/character_based_version/v1.1/char_dict.pkl'
+
+NUM_CHARS_TO_GENERATE = 100
+# CONTEXT_SIZE = 899900
+
+with open(CHAR_DICT, 'rb') as f:
+    char_to_int = pickle.load(f)
+
+with open(VOCABULARY, 'r') as v:
+    VOCAB = eval(v.read()).sort()
 
 # load ascii text and covert to lowercase
 filename = "/home/prometej/Workspaces/PythonWorkspace/chatbot-unk/wiki_merged"
@@ -13,9 +27,9 @@ raw_text = open(filename).read()
 raw_text = raw_text.lower()
 
 # create mapping of unique chars to integers, and a reverse mapping
-chars = sorted(list(set(raw_text)))
-char_to_int = dict((c, i) for i, c in enumerate(chars))
-int_to_char = dict((i, c) for i, c in enumerate(chars))
+# chars = sorted(list(set(raw_text)))
+# char_to_int = dict((c, i) for i, c in enumerate(chars))
+int_to_char = dict((i, c) for i, c in enumerate(VOCAB))
 
 # summarize the loaded data
 n_chars = len(raw_text)
@@ -37,10 +51,10 @@ n_patterns = len(dataX)
 
 print("Total Patterns: ", n_patterns)
 
-# reshape X to be [samples, time steps, features]
+#reshape X to be [samples, time steps, features]
 X = numpy.reshape(dataX, (n_patterns, seq_length, 1))
 
-# normalize
+normalize
 X = X / float(n_vocab)
 
 model = load_model('/home/prometej/Workspaces/PythonWorkspace/project_chatbot/LSTM_model.h5')
@@ -53,10 +67,10 @@ print("\"", ''.join([int_to_char[value] for value in pattern]), "\"\n")
 
 
 # generate characters
-for i in range(100):
+for i in range(NUM_CHARS_TO_GENERATE):
 	x = numpy.reshape(pattern, (1, len(pattern), 1))
 	x = x / float(n_vocab)
-	prediction = model.predict(x, verbose=0)
+	prediction = model.predict(x, verbose=1)
 	index = numpy.argmax(prediction)
 	result = int_to_char[index]
 	seq_in = [int_to_char[value] for value in pattern]
