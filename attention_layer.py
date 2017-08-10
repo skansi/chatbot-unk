@@ -50,7 +50,6 @@ class Attention(Dense):
         contexts = K.sum(weights*inputs, axis=1)
 
         if self.return_sequences:
-            # non functional!!!
             # Returns matching context appended to each timestep (i.e. word) in a sequence
             input_shape = K.int_shape(inputs)
             contexts = K.repeat_elements(contexts, input_shape[1], axis=0)
@@ -82,11 +81,11 @@ the most informative words.
 """
 print('Build model...')
 model = Sequential()
-model.add(Embedding(input_dim=300, output_dim=HIDDEN_SIZE))
+model.add(Embedding(input_dim=30000, output_dim=HIDDEN_SIZE, batch_size=32, input_shape=(200,)))
 # GRU instead of LSTM
 model.add(Bidirectional(layer=GRU(HIDDEN_SIZE, return_sequences=True), merge_mode='concat'))
 model.add(Bidirectional(layer=GRU(HIDDEN_SIZE, return_sequences=True), merge_mode='concat'))
-model.add(Attention(return_sequences=False, units=2*HIDDEN_SIZE, activation='tanh'))
+model.add(Attention(return_sequences=True, units=2*HIDDEN_SIZE, activation='tanh'))
 #model.add(GRU(units=HIDDEN_SIZE))
 model.add(Dense(units=CHARS, activation='softmax'))
 
