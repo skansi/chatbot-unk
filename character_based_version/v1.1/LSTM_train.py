@@ -85,11 +85,17 @@ for subdir, dirs, files in os.walk(ROOTDIR):
         else:
             continue
 
+        text_list = raw_text.split(' ')
         i = 0
-        while i < len(raw_text):
-            if raw_text[i] == '':
-                raw_text[i] == '*'
+        while i < len(text_list):
+            text_list[i] = text_list[i].strip()
             i += 1
+
+        # i = 0
+        # while i < len(raw_text):
+        #     if raw_text[i] == '':
+        #         raw_text[i] == '*'
+        #     i += 1
 
 		# # create mapping of unique chars to integers
         # chars = sorted(list(set(raw_text)))
