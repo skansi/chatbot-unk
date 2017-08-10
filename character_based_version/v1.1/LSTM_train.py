@@ -12,10 +12,11 @@ from keras.models import load_model
 import os
 import pickle
 
-MODEL = '/home/prometej/Workspaces/PythonWorkspace/chatbot-unk/character_based_version/v1.0/LSTM_model.h5'
-ROOTDIR = '/home/prometej/Workspaces/PythonWorkspace/chatbot-unk/Resources/wikidump'
-VOCABULARY = '/home/prometej/Workspaces/PythonWorkspace/chatbot-unk/character_based_version/v1.0/vocab'
-CHAR_DICT = '/home/prometej/Workspaces/PythonWorkspace/chatbot-unk/character_based_version/v1.1/char_dict.pkl'
+MODEL = '/home/novak_luka93/chatbot-unk/character_based_version/v1.1/LSTM_model.h5'
+MODEL_WEIGHTS = '/home/novak_luka93/chatbot-unk/character_based_version/v1.1/LSTM_model_weights.h5'
+ROOTDIR = '/home/novak_luka93/wikidump'
+VOCABULARY = '/home/novak_luka93/chatbot-unk/character_based_version/v1.0/vocab'
+CHAR_DICT = '/home/novak_luka93/chatbot-unk/character_based_version/v1.1/char_dict.pkl'
 
 # # create vocabulary with all ascii characters
 # L = list(range(128))
@@ -23,7 +24,10 @@ CHAR_DICT = '/home/prometej/Workspaces/PythonWorkspace/chatbot-unk/character_bas
 
 # list of all allowed characters
 with open(VOCABULARY, 'r') as v:
-    VOCAB = eval(v.read()).sort()
+    VOCAB = eval(v.read())
+
+VOCAB = sorted(VOCAB)
+print(VOCAB)
 
 # hyperparameters
 NUM_EPOCH = 50
@@ -71,9 +75,8 @@ for subdir, dirs, files in os.walk(ROOTDIR):
         print('Working on file:', f)
         SOURCE = str(subdir) + '/' + str(f)
 
-		# load ascii text and covert to lowercase
+	# load text and covert to lowercase
         raw_text = open(SOURCE).read()
-        raw_text = raw_text.decode('utf-8').encode('ascii', 'replace')
         raw_text = raw_text.lower()
         if len(raw_text) >= DATA_SIZE:
             raw_text = raw_text[:DATA_SIZE]
@@ -119,6 +122,7 @@ for subdir, dirs, files in os.walk(ROOTDIR):
 
         print('\nSaving model...\n')
         model.save(MODEL)
+        model.save_weights(MODEL_WEIGHTS)
         print('Saved!\n')
 
 print('Done.')
