@@ -65,7 +65,7 @@ class Attention(Dense):
         batch_size, timesteps, input_dim = input_shape
 
         if self.return_sequences:
-            output_shape = (batch_size, timesteps, 2*self.input_dim)
+            output_shape = (batch_size, timesteps, 2*input_dim)
         else:
             output_shape = (batch_size, input_dim)
         return output_shape
@@ -88,8 +88,7 @@ model.add(Bidirectional(layer=GRU(HIDDEN_SIZE, return_sequences=True), merge_mod
 model.add(Bidirectional(layer=GRU(HIDDEN_SIZE, return_sequences=True), merge_mode='concat'))
 model.add(Attention(return_sequences=False, units=2*HIDDEN_SIZE, activation='tanh'))
 #model.add(GRU(units=HIDDEN_SIZE))
-model.add(Dense(units=CHARS))  # add Timedistributed wrapper?
-model.add(Activation('softmax'))
+model.add(Dense(units=CHARS, activation='softmax'))
 
 model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
 model.summary()
