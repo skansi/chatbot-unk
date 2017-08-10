@@ -84,7 +84,7 @@ for subdir, dirs, files in os.walk(ROOTDIR):
         i = 0
         while i < len(text_list):
             if text_list[i] == '':
-                pop text_list[i]
+                pop(text_list[i])
                 continue
             else:
                 text_list[i] = text_list[i].strip()
