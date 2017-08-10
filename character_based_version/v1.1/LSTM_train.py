@@ -84,9 +84,11 @@ for subdir, dirs, files in os.walk(ROOTDIR):
         i = 0
         while i < len(text_list):
             text_list[i] = text_list[i].strip()
+            text_list[i] = text_list[i].strip('')
             i += 1
 
         raw_text = ' '.join(text_list)
+        raw_text.strip('')
 
         if len(raw_text) >= DATA_SIZE:
             raw_text = raw_text[:DATA_SIZE]
