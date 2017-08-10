@@ -16,7 +16,7 @@ import sys
 MODEL = '/home/novak_luka93/chatbot-unk/character_based_version/v1.1/LSTM_model.h5'
 MODEL_WEIGHTS = '/home/novak_luka93/chatbot-unk/character_based_version/v1.1/LSTM_model_weights.h5'
 ROOTDIR = '/home/novak_luka93/wikidump'
-VOCABULARY = '/home/novak_luka93/chatbot-unk/character_based_version/v1.0/vocab'
+VOCABULARY = '/home/novak_luka93/chatbot-unk/character_based_version/v1.1/vocab2'
 CHAR_DICT = '/home/novak_luka93/chatbot-unk/character_based_version/v1.1/char_dict.pkl'
 
 # # create vocabulary with all ascii characters
