@@ -80,15 +80,16 @@ for subdir, dirs, files in os.walk(ROOTDIR):
         raw_text = open(SOURCE).read()
         raw_text = raw_text.lower()
 
-        # remove empty string sequences
-        p = list(raw_text)
-        p = list(filter(None, p))
-        raw_text = ''.join(p)
-
         if len(raw_text) >= DATA_SIZE:
             raw_text = raw_text[:DATA_SIZE]
         else:
             continue
+
+        i = 0
+        while i < len(raw_text):
+            if raw_text[i] == '':
+                raw_text[i] == '*'
+            i += 1
 
 		# # create mapping of unique chars to integers
         # chars = sorted(list(set(raw_text)))
@@ -105,12 +106,10 @@ for subdir, dirs, files in os.walk(ROOTDIR):
         dataY = []
         for i in range(0, n_chars - SEQ_LENGTH, 1):
         	seq_in = raw_text[i:i + SEQ_LENGTH]
+            print('Seq_in_' + str(i) + ': ' + seq_in)
         	seq_out = raw_text[i + SEQ_LENGTH]
+            print('Seq_out_' + str(i) + ': ' + seq_out)
         	dataX.append([char_to_int[char] for char in seq_in])
-            index = 1
-            while seq_out == '':
-                seq_out = raw_text[i + SEQ_LENGTH + index]
-                index += 1
         	dataY.append(char_to_int[seq_out])
         n_patterns = len(dataX)
         print("Total Patterns: ", n_patterns)
