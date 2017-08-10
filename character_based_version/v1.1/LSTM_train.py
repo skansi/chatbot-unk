@@ -107,12 +107,8 @@ for subdir, dirs, files in os.walk(ROOTDIR):
         	seq_in = raw_text[i:i + SEQ_LENGTH]
         	seq_out = raw_text[i + SEQ_LENGTH]
         	dataX.append([char_to_int[char] for char in seq_in])
-        	#try:
-        	#	dataY.append(char_to_int[seq_out])
-        	#except KeyError as e:
-        	#	print('seq_in:', seq_in)
-        	#	print('seq_out:', seq_out)
-        	#	sys.exit()
+            while seq_out == '':
+                seq_out = raw_text[i + SEQ_LENGTH + 1]
         	dataY.append(char_to_int[seq_out])
         n_patterns = len(dataX)
         print("Total Patterns: ", n_patterns)
