@@ -83,9 +83,13 @@ for subdir, dirs, files in os.walk(ROOTDIR):
         text_list = raw_text.split(' ')
         i = 0
         while i < len(text_list):
-            text_list[i] = text_list[i].strip()
-            text_list[i] = text_list[i].strip('')
-            i += 1
+            if text_list[i] == '':
+                pop text_list[i]
+                continue
+            else:
+                text_list[i] = text_list[i].strip()
+                text_list[i] = text_list[i].strip('')
+                i += 1
 
         raw_text = ' '.join(text_list)
         raw_text.strip('')
