@@ -106,9 +106,9 @@ for subdir, dirs, files in os.walk(ROOTDIR):
         dataY = []
         for i in range(0, n_chars - SEQ_LENGTH, 1):
         	seq_in = raw_text[i:i + SEQ_LENGTH]
-            print('Seq_in_' + str(i) + ': ' + seq_in)
+            # print('Seq_in_' + str(i) + ': ' + seq_in)
         	seq_out = raw_text[i + SEQ_LENGTH]
-            print('Seq_out_' + str(i) + ': ' + seq_out)
+            # print('Seq_out_' + str(i) + ': ' + seq_out)
         	dataX.append([char_to_int[char] for char in seq_in])
         	dataY.append(char_to_int[seq_out])
         n_patterns = len(dataX)
