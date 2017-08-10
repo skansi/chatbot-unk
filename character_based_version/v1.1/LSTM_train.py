@@ -91,6 +91,8 @@ for subdir, dirs, files in os.walk(ROOTDIR):
             text_list[i] = text_list[i].strip()
             i += 1
 
+        raw_text = ' '.join(text_list)
+
         # i = 0
         # while i < len(raw_text):
         #     if raw_text[i] == '':
