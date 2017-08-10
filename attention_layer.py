@@ -16,10 +16,11 @@ class Attention(Dense):
         # Input shape
             3D tensor with shape: `(batch_size, timesteps, input_dim)`.
         # Output shape
-            - if `return_sequences`: 3D tensor with shape `(batch_size, timesteps, units+input_dim)`.
-            - else, 2D tensor with shape `(batch_size, units)`.
+            - if `return_sequences`: 3D tensor with shape `(batch_size, timesteps, 2*input_dim)`.
+            - else, 2D tensor with shape `(batch_size, input_dim)`.
         :param kwargs:
-        Just put it on top of an RNN Layer (GRU/LSTM/SimpleRNN) with return_sequences=True.
+        Just put it on top of an RNN Layer (GRU/LSTM/SimpleRNN) with return_sequences=True,
+        and units=output_dim from the previous RNN layer.
         Example:
             model.add(LSTM(64, return_sequences=True))
             model.add(Attention(64, activation='tanh'))
@@ -30,6 +31,8 @@ class Attention(Dense):
         super(Attention, self).__init__(**kwargs)
 
     def build(self, input_shape):
+        assert len(input_shape) == 3
+        assert input_shape[-1] == self.units
         # Create a trainable weight variable for this layer.
         if self.use_context:
             self.context = self.add_weight(name='context', 
@@ -45,20 +48,27 @@ class Attention(Dense):
             outputs = K.dot(outputs, self.context)
         weights = K.softmax(outputs)
         contexts = K.sum(weights*inputs, axis=1)
+
         if self.return_sequences:
-            # Appends matching context to each timestep (i.e. word) in a sequence
-            new_contexts = []
-            for i in range(contexts.shape[0]):
-                context_i = K.transpose(contexts[i])
-                new_contexts.append([context_i for _ in range(contexts.shape[1])])
-            new_contexts = K.variable(value=np.array(new_contexts))
-            return K.concatenate([new_contexts, inputs], axis=3)
+            # non functional!!!
+            # Returns matching context appended to each timestep (i.e. word) in a sequence
+            input_shape = K.int_shape(inputs)
+            contexts = K.repeat_elements(contexts, input_shape[1], axis=0)
+            contexts = K.reshape(contexts, input_shape)
+            return K.concatenate([contexts, inputs])
         else:
-            # Returns matching contexts for each sequence
+            # Returns matching contexts for each input sequence
             return contexts
 
     def compute_output_shape(self, input_shape):
-        return (input_shape[0], input_shape[-1])
+        assert len(input_shape) == 3
+        batch_size, timesteps, input_dim = input_shape
+
+        if self.return_sequences:
+            output_shape = (batch_size, timesteps, 2*self.input_dim)
+        else:
+            output_shape = (batch_size, input_dim)
+        return output_shape
 
 HIDDEN_SIZE = 50
 BATCH_SIZE = 128
@@ -76,8 +86,9 @@ model.add(Embedding(input_dim=300, output_dim=HIDDEN_SIZE))
 # GRU instead of LSTM
 model.add(Bidirectional(layer=GRU(HIDDEN_SIZE, return_sequences=True), merge_mode='concat'))
 model.add(Bidirectional(layer=GRU(HIDDEN_SIZE, return_sequences=True), merge_mode='concat'))
-model.add(Attention(return_sequences=False ,units=2*HIDDEN_SIZE, activation='tanh'))
-model.add(Dense(units=CHARS))
+model.add(Attention(return_sequences=False, units=2*HIDDEN_SIZE, activation='tanh'))
+#model.add(GRU(units=HIDDEN_SIZE))
+model.add(Dense(units=CHARS))  # add Timedistributed wrapper?
 model.add(Activation('softmax'))
 
 model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
