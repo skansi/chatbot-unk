@@ -80,11 +80,6 @@ for subdir, dirs, files in os.walk(ROOTDIR):
         raw_text = open(SOURCE).read()
         raw_text = raw_text.lower()
 
-        if len(raw_text) >= DATA_SIZE:
-            raw_text = raw_text[:DATA_SIZE]
-        else:
-            continue
-
         text_list = raw_text.split(' ')
         i = 0
         while i < len(text_list):
@@ -92,6 +87,11 @@ for subdir, dirs, files in os.walk(ROOTDIR):
             i += 1
 
         raw_text = ' '.join(text_list)
+
+        if len(raw_text) >= DATA_SIZE:
+            raw_text = raw_text[:DATA_SIZE]
+        else:
+            continue
 
         # i = 0
         # while i < len(raw_text):
