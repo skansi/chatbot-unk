@@ -49,11 +49,11 @@ def conversion(SOURCE):
     p = re.compile(',')
     data = p.sub('', data)
 
-    # remove all commas
+    # remove all colons
     p = re.compile(':')
     data = p.sub('', data)
 
-    # remove all commas
+    # remove all semicolons
     p = re.compile(';')
     data = p.sub('', data)
 
@@ -71,7 +71,7 @@ def conversion(SOURCE):
     data = p.sub('', data)
     data = r.sub('', data)
 
-    # remove ... sequences
+    # remove '...' sequences
     p = re.compile('\.{3}')
     data = p.sub('', data)
 
