@@ -11,6 +11,7 @@ from keras.utils import np_utils
 from keras.models import load_model
 import os
 import pickle
+import re
 
 MODEL = '/home/novak_luka93/chatbot-unk/character_based_version/v1.1/LSTM_model.h5'
 MODEL_WEIGHTS = '/home/novak_luka93/chatbot-unk/character_based_version/v1.1/LSTM_model_weights.h5'
