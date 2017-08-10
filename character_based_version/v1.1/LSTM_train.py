@@ -24,7 +24,7 @@ CHAR_DICT = '/home/novak_luka93/chatbot-unk/character_based_version/v1.1/char_di
 # VOCAB = list(''.join(map(chr, L)))
 
 # list of all allowed characters
-with open(VOCABULARY, 'r') as v:
+with open(VOCABULARY, 'r', encoding='utf-8') as v:
     VOCAB = eval(v.read())
 
 VOCAB = sorted(VOCAB)
