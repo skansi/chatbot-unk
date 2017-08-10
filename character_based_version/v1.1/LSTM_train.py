@@ -11,6 +11,7 @@ from keras.utils import np_utils
 from keras.models import load_model
 import os
 import pickle
+import sys
 
 MODEL = '/home/novak_luka93/chatbot-unk/character_based_version/v1.1/LSTM_model.h5'
 MODEL_WEIGHTS = '/home/novak_luka93/chatbot-unk/character_based_version/v1.1/LSTM_model_weights.h5'
@@ -106,6 +107,12 @@ for subdir, dirs, files in os.walk(ROOTDIR):
         	seq_in = raw_text[i:i + SEQ_LENGTH]
         	seq_out = raw_text[i + SEQ_LENGTH]
         	dataX.append([char_to_int[char] for char in seq_in])
+        	#try:
+        	#	dataY.append(char_to_int[seq_out])
+        	#except KeyError as e:
+        	#	print('seq_in:', seq_in)
+        	#	print('seq_out:', seq_out)
+        	#	sys.exit()
         	dataY.append(char_to_int[seq_out])
         n_patterns = len(dataX)
         print("Total Patterns: ", n_patterns)
