@@ -1,8 +1,8 @@
 import os
 
-ROOTDIR = '/home/prometej/Workspaces/PythonWorkspace/chatbot-unk/Resources/wikidump'
+ROOTDIR = '/home/novak_luka93/wikidump'
 char_list = set()
-with open('/home/prometej/Workspaces/PythonWorkspace/chatbot-unk/character_based_version/v1.0/vocab', 'r') as v:
+with open('/home/novak_luka93/chatbot-unk/character_based_version/v1.0/vocab', 'r') as v:
     VOCAB = eval(v.read())
 
 for subdir, dirs, files in os.walk(ROOTDIR):
