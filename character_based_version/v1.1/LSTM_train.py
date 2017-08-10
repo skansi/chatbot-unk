@@ -70,6 +70,7 @@ model.save(MODEL)
 
 for subdir, dirs, files in os.walk(ROOTDIR):
     name = str(subdir).split('/')[-1]
+    print(subdir)
     list_files = files
     completed = []
     for f in files:
