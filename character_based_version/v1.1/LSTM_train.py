@@ -11,7 +11,6 @@ from keras.utils import np_utils
 from keras.models import load_model
 import os
 import pickle
-import re
 
 MODEL = '/home/novak_luka93/chatbot-unk/character_based_version/v1.1/LSTM_model.h5'
 MODEL_WEIGHTS = '/home/novak_luka93/chatbot-unk/character_based_version/v1.1/LSTM_model_weights.h5'
@@ -79,6 +78,12 @@ for subdir, dirs, files in os.walk(ROOTDIR):
 	# load text and covert to lowercase
         raw_text = open(SOURCE).read()
         raw_text = raw_text.lower()
+
+        # remove empty string sequences
+        p = list(raw_text)
+        p = list(filter(None, p))
+        raw_text = ''.join(p)
+
         if len(raw_text) >= DATA_SIZE:
             raw_text = raw_text[:DATA_SIZE]
         else:
