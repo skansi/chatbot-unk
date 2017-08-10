@@ -42,6 +42,7 @@ INPUT_SHAPE = ((DATA_SIZE - SEQ_LENGTH), VOCAB_SIZE)
 
 # create mapping of unique chars to integers
 char_to_int = dict((c, i) for i, c in enumerate(VOCAB))
+print(char_to_int)
 
 # saving dictionary for model prediction
 with open(CHAR_DICT, 'wb') as f:
