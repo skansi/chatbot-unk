@@ -51,11 +51,11 @@ with open(CHAR_DICT, 'wb') as f:
 
 # define the LSTM model
 model = Sequential()
-model.add(SimpleRNN(NUM_HIDDEN, input_shape=INPUT_SHAPE, batch_size=BATCH_SIZE, return_sequences=True))
+model.add(LSTM(NUM_HIDDEN, input_shape=INPUT_SHAPE, batch_size=BATCH_SIZE, return_sequences=True))
 model.add(Dropout(0.3))
-model.add(SimpleRNN(NUM_HIDDEN, return_sequences=True))
+model.add(LSTM(NUM_HIDDEN, return_sequences=True))
 model.add(Dropout(0.25))
-model.add(SimpleRNN(NUM_HIDDEN))
+model.add(LSTM(NUM_HIDDEN))
 model.add(Dropout(0.2))
 # model.add(Flatten())
 model.add(Dense(units=VOCAB_SIZE, activation='softmax'))
