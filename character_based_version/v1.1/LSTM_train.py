@@ -77,34 +77,38 @@ for subdir, dirs, files in os.walk(ROOTDIR):
         SOURCE = str(subdir) + '/' + str(f)
 
 	# load text and covert to lowercase
-        raw_text = open(SOURCE, encoding='utf-8').read()
-        raw_text = raw_text.lower()
+        text = open(SOURCE, encoding='utf-8').read()
+        text = text.lower()
 
         repeat = 1
 
-        if len(raw_text) >= 2*DATA_SIZE:
-            data1 = raw_text[:DATA_SIZE]
-            data2 = [DATA_SIZE:2*DATA_SIZE]
+        if len(text) >= 2*DATA_SIZE:
             repeat = 2
+            print('Data split in 2 becauseof its size!')
+        elif len(text) > DATA_SIZE:
+            print('Data shrinked to certain size to fit the net!')
+        else:
+            print('Data too small! Skipping...')
+            continue
 
         for i in range(repeat):
 
-            text_list = raw_text.split(' ')
-            i = 0
-            while i < len(text_list):
-                if text_list[i] == '':
-                    text_list.pop(i)
-                    continue
-                else:
-                    text_list[i] = text_list[i].strip()
-                    i += 1
+            # text_list = raw_text.split(' ')
+            # i = 0
+            # while i < len(text_list):
+            #     if text_list[i] == '':
+            #         text_list.pop(i)
+            #         continue
+            #     else:
+            #         text_list[i] = text_list[i].strip()
+            #         i += 1
+            #
+            # raw_text = ' '.join(text_list)
 
-            raw_text = ' '.join(text_list)
-
-            if len(raw_text) >= DATA_SIZE:
-                raw_text = raw_text[:DATA_SIZE]
+            if i == 0:
+                raw_text = text[:DATA_SIZE]
             else:
-                continue
+                raw_text = text[DATA_SIZE:2*DATA_SIZE]
 
     		# summarize the loaded data
             n_chars = len(raw_text)
