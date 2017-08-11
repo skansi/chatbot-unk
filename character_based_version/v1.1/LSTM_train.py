@@ -52,16 +52,16 @@ with open(CHAR_DICT, 'wb') as f:
 # define the LSTM model
 model = Sequential()
 model.add(SimpleRNN(NUM_HIDDEN, input_shape=INPUT_SHAPE, batch_size=BATCH_SIZE, return_sequences=True))
-model.add(Dropout(0.4))
-model.add(SimpleRNN(NUM_HIDDEN, return_sequences=True))
 model.add(Dropout(0.3))
+model.add(SimpleRNN(NUM_HIDDEN, return_sequences=True))
+model.add(Dropout(0.25))
 model.add(SimpleRNN(NUM_HIDDEN))
 model.add(Dropout(0.2))
 # model.add(Flatten())
 model.add(Dense(units=VOCAB_SIZE, activation='softmax'))
 model.summary()
 
-adam_optimizer = Adam(lr=0.001, beta_1=0.9, beta_2=0.999, epsilon=1e-08, decay=1e-06)
+adam_optimizer = Adam(lr=0.01, beta_1=0.9, beta_2=0.999, epsilon=1e-08, decay=1e-06)
 
 model.compile(loss='categorical_crossentropy', optimizer=adam_optimizer, verbose=VERBOSE, metrics=['accuracy'])
 
