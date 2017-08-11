@@ -97,10 +97,10 @@ the most informative words.
 print('Build model...')
 model = Sequential()
 # CharCNN
-#model.add(Conv1D(32, (3, 3), activation='relu', input_shape=(100, 100, 3)))
-#model.add(MaxPooling1D(pool_size=(2, 2)))
-#model.add(Dropout(0.25))
+#model.add(Conv1D(HIDDEN_SIZE, (3, 3), activation='tanh', input_shape=(None, 128)))
+#model.add(MaxPooling1D(pool_size=2))
 # replace embedding with charCNN
+# add dropouts
 model.add(Embedding(input_dim=30000, output_dim=HIDDEN_SIZE, batch_size=BATCH_SIZE, input_shape=(200,)))
 model.add(Bidirectional(layer=GRU(HIDDEN_SIZE, return_sequences=True), merge_mode='concat'))
 model.add(Bidirectional(layer=GRU(HIDDEN_SIZE, return_sequences=True), merge_mode='concat'))
