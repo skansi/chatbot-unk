@@ -35,7 +35,7 @@ NUM_EPOCH = 10
 BATCH_SIZE = 32
 NUM_HIDDEN = 50
 VERBOSE = 1
-DATA_SIZE = 500000
+DATA_SIZE = 500100
 CONTEXT = 100
 VOCAB_SIZE = len(VOCAB)
 INPUT_SHAPE = (CONTEXT, VOCAB_SIZE)
@@ -51,19 +51,19 @@ with open(CHAR_DICT, 'wb') as f:
 
 # define the LSTM model
 model = Sequential()
-model.add(SimpleRNN(NUM_HIDDEN, input_shape=INPUT_SHAPE, batch_size=BATCH_SIZE, return_sequences=True))
-model.add(Dropout(0.4))
-model.add(SimpleRNN(NUM_HIDDEN, return_sequences=True))
+model.add(LSTM(NUM_HIDDEN, input_shape=INPUT_SHAPE, batch_size=BATCH_SIZE, return_sequences=True))
 model.add(Dropout(0.3))
-model.add(SimpleRNN(NUM_HIDDEN))
+model.add(LSTM(NUM_HIDDEN, return_sequences=True))
+model.add(Dropout(0.25))
+model.add(LSTM(NUM_HIDDEN))
 model.add(Dropout(0.2))
 # model.add(Flatten())
 model.add(Dense(units=VOCAB_SIZE, activation='softmax'))
 model.summary()
 
-adam_optimizer = Adam(lr=0.001, beta_1=0.9, beta_2=0.999, epsilon=1e-08, decay=1e-06)
+adam_optimizer = Adam(lr=0.01, beta_1=0.9, beta_2=0.999, epsilon=1e-08, decay=1e-06)
 
-model.compile(loss='categorical_crossentropy', optimizer=adam_optimizer, verbose=VERBOSE)
+model.compile(loss='categorical_crossentropy', optimizer=adam_optimizer, verbose=VERBOSE, metrics=['accuracy'])
 
 model.save(MODEL)
 
@@ -77,81 +77,84 @@ for subdir, dirs, files in os.walk(ROOTDIR):
         SOURCE = str(subdir) + '/' + str(f)
 
 	# load text and covert to lowercase
-        raw_text = open(SOURCE, encoding='utf-8').read()
-        raw_text = raw_text.lower()
+        text = open(SOURCE, encoding='utf-8').read()
+        text = text.lower()
 
-        text_list = raw_text.split(' ')
-        i = 0
-        while i < len(text_list):
-            if text_list[i] == '':
-                text_list.pop(i)
-                continue
-            else:
-                text_list[i] = text_list[i].strip()
-                i += 1
+        repeat = 1
 
-        raw_text = ' '.join(text_list)
-
-        if len(raw_text) >= DATA_SIZE:
-            raw_text = raw_text[:DATA_SIZE]
+        if len(text) >= 2*DATA_SIZE:
+            repeat = 2
+            print('Data split in 2 becauseof its size!')
+        elif len(text) > DATA_SIZE:
+            print('Data shrinked to certain size to fit the net!')
         else:
+            print('Data too small! Skipping...')
             continue
 
-        # i = 0
-        # while i < len(raw_text):
-        #     if raw_text[i] == '':
-        #         raw_text[i] == '*'
-        #     i += 1
+        for i in range(repeat):
 
-		# # create mapping of unique chars to integers
-        # chars = sorted(list(set(raw_text)))
-        # char_to_int = dict((c, i) for i, c in enumerate(chars))
+            # text_list = raw_text.split(' ')
+            # i = 0
+            # while i < len(text_list):
+            #     if text_list[i] == '':
+            #         text_list.pop(i)
+            #         continue
+            #     else:
+            #         text_list[i] = text_list[i].strip()
+            #         i += 1
+            #
+            # raw_text = ' '.join(text_list)
 
-		# summarize the loaded data
-        n_chars = len(raw_text)
-        # n_vocab = len(chars)
-        print("Total Characters in Article: ", n_chars)
-        # print("Total Vocab: ", n_vocab)
+            if i == 0:
+                raw_text = text[:DATA_SIZE]
+            else:
+                raw_text = text[DATA_SIZE:2*DATA_SIZE]
 
-		# prepare the dataset of input to output pairs encoded as integers
-        dataX = []
-        dataY = []
-        for i in range(0, n_chars - CONTEXT):
-        	seq_in = raw_text[i:i + CONTEXT]
-            # print('Seq_in_' + str(i) + ': ' + seq_in)
-        	seq_out = raw_text[i + CONTEXT]
-            # print('Seq_out_' + str(i) + ': ' + seq_out)
-        	dataX.append([char_to_int[char] for char in seq_in])
-        	dataY.append(char_to_int[seq_out])
-        N_SAMPLES = len(dataX)
-        print("Total Number Of Samples: ", N_SAMPLES)
+    		# summarize the loaded data
+            n_chars = len(raw_text)
+            # n_vocab = len(chars)
+            print("Total Characters in Article: ", n_chars)
+            # print("Total Vocab: ", n_vocab)
 
-        # normalize and one hot encode every letter from the context
-        list_samples = []
-        for x in dataX:
-        	x = [(i / VOCAB_SIZE) for i in x]
-        	list_samples.append(np_utils.to_categorical(x, num_classes=VOCAB_SIZE))
+    		# prepare the dataset of input to output pairs encoded as integers
+            dataX = []
+            dataY = []
+            for i in range(0, n_chars - CONTEXT):
+            	seq_in = raw_text[i:i + CONTEXT]
+                # print('Seq_in_' + str(i) + ': ' + seq_in)
+            	seq_out = raw_text[i + CONTEXT]
+                # print('Seq_out_' + str(i) + ': ' + seq_out)
+            	dataX.append([char_to_int[char] for char in seq_in])
+            	dataY.append(char_to_int[seq_out])
+            N_SAMPLES = len(dataX)
+            print("Total Number Of Samples: ", N_SAMPLES)
 
-        # reshape X to be [samples, time steps, features]
-        X = numpy.reshape(list_samples,(N_SAMPLES, CONTEXT, VOCAB_SIZE))
-        print('X:', X.shape)
+            # normalize and one hot encode every letter from the context
+            list_samples = []
+            for x in dataX:
+            	x = [(i / VOCAB_SIZE) for i in x]
+            	list_samples.append(np_utils.to_categorical(x, num_classes=VOCAB_SIZE))
 
-        # normalize
-        # X = X / float(n_vocab)
+            # reshape X to be [samples, time steps, features]
+            X = numpy.reshape(list_samples,(N_SAMPLES, CONTEXT, VOCAB_SIZE))
+            print('X:', X.shape)
 
-        # one hot encode the output variable
-        y = np_utils.to_categorical(dataY)
-        y = numpy.reshape(y, (N_SAMPLES, VOCAB_SIZE))
-        print('y:', y.shape)
+            # normalize
+            # X = X / float(n_vocab)
 
-        model = load_model(MODEL)
+            # one hot encode the output variable
+            y = np_utils.to_categorical(dataY)
+            y = numpy.reshape(y, (N_SAMPLES, VOCAB_SIZE))
+            print('y:', y.shape)
 
-        # fit the model
-        model.fit(X, y, epochs=NUM_EPOCH, batch_size=BATCH_SIZE, verbose=VERBOSE)
+            model = load_model(MODEL)
 
-        print('\nSaving model...\n')
-        model.save(MODEL)
-        model.save_weights(MODEL_WEIGHTS)
-        print('Saved!\n')
+            # fit the model
+            model.fit(X, y, epochs=NUM_EPOCH, batch_size=BATCH_SIZE, verbose=VERBOSE)
+
+            print('\nSaving model...\n')
+            model.save(MODEL)
+            model.save_weights(MODEL_WEIGHTS)
+            print('Saved!\n')
 
 print('Done.')
