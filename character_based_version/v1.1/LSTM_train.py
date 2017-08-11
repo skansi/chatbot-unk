@@ -63,7 +63,7 @@ model.summary()
 
 adam_optimizer = Adam(lr=0.001, beta_1=0.9, beta_2=0.999, epsilon=1e-08, decay=1e-06)
 
-model.compile(loss='categorical_crossentropy', optimizer=adam_optimizer, verbose=VERBOSE)
+model.compile(loss='categorical_crossentropy', optimizer=adam_optimizer, verbose=VERBOSE, metrics=['accuracy'])
 
 model.save(MODEL)
 
