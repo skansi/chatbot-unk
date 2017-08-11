@@ -1,10 +1,12 @@
+import numpy as np
+from keras import backend as K
 from keras.models import Sequential
 from keras.layers.recurrent import *
 from keras.layers.embeddings import *
 from keras.layers.wrappers import *
 from keras.layers.core import *
-from keras import backend as K
-import numpy as np
+from keras.layers.convolutional import Conv1D
+from keras.layers.pooling import MaxPooling1D
 
 class Attention(Dense):
     """
@@ -87,15 +89,19 @@ BATCH_SIZE = 128
 VOCAB_SIZE = 70000
 
 """
-Our message-level sentiment analysis model
-(MSA) consists of a 2-layer bidirectional LSTM
-(BiLSTM) with an attention mechanism, for identifying
+The language model uses CharCNN embedding and
+consists of a 2-layer bidirectional GRU
+(BiGRU) with an attention mechanism, for identifying
 the most informative words.
 """
 print('Build model...')
 model = Sequential()
+# CharCNN
+#model.add(Conv1D(32, (3, 3), activation='relu', input_shape=(100, 100, 3)))
+#model.add(MaxPooling1D(pool_size=(2, 2)))
+#model.add(Dropout(0.25))
 # replace embedding with charCNN
-model.add(Embedding(input_dim=30000, output_dim=HIDDEN_SIZE, batch_size=32, input_shape=(200,)))
+model.add(Embedding(input_dim=30000, output_dim=HIDDEN_SIZE, batch_size=BATCH_SIZE, input_shape=(200,)))
 model.add(Bidirectional(layer=GRU(HIDDEN_SIZE, return_sequences=True), merge_mode='concat'))
 model.add(Bidirectional(layer=GRU(HIDDEN_SIZE, return_sequences=True), merge_mode='concat'))
 model.add(Attention(units=2*HIDDEN_SIZE, activation='tanh'))
