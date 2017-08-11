@@ -2,9 +2,9 @@
 
 import numpy
 from keras.models import Sequential
-from keras.layers import Dense
+from keras.layers import Dense, Flatten
 from keras.layers import Dropout
-from keras.layers import LSTM
+from keras.layers.recurrent import LSTM, GRU, SimpleRNN
 from keras.optimizers import Adam
 from keras.callbacks import ModelCheckpoint
 from keras.utils import np_utils
@@ -31,14 +31,15 @@ VOCAB = sorted(VOCAB)
 print(VOCAB)
 
 # hyperparameters
-NUM_EPOCH = 50
+NUM_EPOCH = 10
 BATCH_SIZE = 32
-NUM_HIDDEN = 256
+NUM_HIDDEN = 50
 VERBOSE = 1
-DATA_SIZE = 900000
-SEQ_LENGTH = 100
+DATA_SIZE = 500000
+CONTEXT = 100
 VOCAB_SIZE = len(VOCAB)
-INPUT_SHAPE = ((DATA_SIZE - SEQ_LENGTH), VOCAB_SIZE)
+INPUT_SHAPE = (CONTEXT, VOCAB_SIZE)
+print('Input shape:', INPUT_SHAPE)
 
 # create mapping of unique chars to integers
 char_to_int = dict((c, i) for i, c in enumerate(VOCAB))
@@ -48,19 +49,16 @@ print(char_to_int)
 with open(CHAR_DICT, 'wb') as f:
     pickle.dump(char_to_int, f, pickle.HIGHEST_PROTOCOL)
 
-# summarize the character vocabulary
-n_vocab = len(VOCAB)
-print("Total Vocab: ", n_vocab)
-
 # define the LSTM model
 model = Sequential()
-model.add(LSTM(NUM_HIDDEN, input_shape=INPUT_SHAPE, return_sequences=True))
+model.add(SimpleRNN(NUM_HIDDEN, input_shape=INPUT_SHAPE, batch_size=BATCH_SIZE, return_sequences=True))
 model.add(Dropout(0.4))
-model.add(LSTM(NUM_HIDDEN, return_sequences=True))
+model.add(SimpleRNN(NUM_HIDDEN, return_sequences=True))
 model.add(Dropout(0.3))
-model.add(LSTM(NUM_HIDDEN))
+model.add(SimpleRNN(NUM_HIDDEN))
 model.add(Dropout(0.2))
-model.add(Dense((DATA_SIZE - SEQ_LENGTH), activation='softmax'))
+# model.add(Flatten())
+model.add(Dense(units=VOCAB_SIZE, activation='softmax'))
 model.summary()
 
 adam_optimizer = Adam(lr=0.001, beta_1=0.9, beta_2=0.999, epsilon=1e-08, decay=1e-06)
@@ -118,26 +116,33 @@ for subdir, dirs, files in os.walk(ROOTDIR):
 		# prepare the dataset of input to output pairs encoded as integers
         dataX = []
         dataY = []
-        for i in range(0, n_chars - SEQ_LENGTH, 1):
-        	seq_in = raw_text[i:i + SEQ_LENGTH]
+        for i in range(0, n_chars - CONTEXT):
+        	seq_in = raw_text[i:i + CONTEXT]
             # print('Seq_in_' + str(i) + ': ' + seq_in)
-        	seq_out = raw_text[i + SEQ_LENGTH]
+        	seq_out = raw_text[i + CONTEXT]
             # print('Seq_out_' + str(i) + ': ' + seq_out)
         	dataX.append([char_to_int[char] for char in seq_in])
         	dataY.append(char_to_int[seq_out])
-        n_patterns = len(dataX)
-        print("Total Patterns: ", n_patterns)
+        N_SAMPLES = len(dataX)
+        print("Total Number Of Samples: ", N_SAMPLES)
+
+        # normalize and one hot encode every letter from the context
+        list_samples = []
+        for x in dataX:
+        	x = [(i / VOCAB_SIZE) for i in x]
+        	list_samples.append(np_utils.to_categorical(x, num_classes=VOCAB_SIZE))
 
         # reshape X to be [samples, time steps, features]
-        X = numpy.reshape(dataX, (n_patterns, SEQ_LENGTH, 1))
-        print(X.shape)
+        X = numpy.reshape(list_samples,(N_SAMPLES, CONTEXT, VOCAB_SIZE))
+        print('X:', X.shape)
 
         # normalize
-        X = X / float(n_vocab)
+        # X = X / float(n_vocab)
 
         # one hot encode the output variable
         y = np_utils.to_categorical(dataY)
-        print('Y shape:', y.shape)
+        y = numpy.reshape(y, (N_SAMPLES, VOCAB_SIZE))
+        print('y:', y.shape)
 
         model = load_model(MODEL)
 
