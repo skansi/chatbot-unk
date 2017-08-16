@@ -7,7 +7,7 @@ min_size = sys.maxsize
 max_size = 0
 sum_size = 0
 num_files = 0
-ROOTDIR = '/home/prometej/Workspaces/PythonWorkspace/Resources/wikidump'
+ROOTDIR = '/home/novak_luka93/wikidump'
 smaller = 0
 equal = 0
 

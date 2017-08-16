@@ -32,7 +32,7 @@ NUM_EPOCH = 10
 BATCH_SIZE = 32
 NUM_HIDDEN = 128
 VERBOSE = 1
-DATA_SIZE = 512100
+DATA_SIZE = 5220
 CONTEXT = 100
 VOCAB_SIZE = len(VOCAB)
 # OPTIMIZER = Adam(lr=0.001, beta_1=0.9, beta_2=0.999, epsilon=1e-08, decay=1e-03)
@@ -110,16 +110,16 @@ for subdir, dirs, files in os.walk(ROOTDIR):
             syllables_list = []
 
             # split the data on syllables
-            for i in text_list:
+            for word in text_list:
                 try:
                     l = h_en.syllables(word)
                     for s in l:
                         if l.index(s) == (len(l) - 1):
                             s = s + ' '
-                        syllables[s] = syllables.setdefault(s, 0) + 1
+                        syllables_list = syllables_list + [s]
                 except ValueError:
                     print(word)
-                    
+
     		# summarize the loaded data
             n_syllables = len(syllables_list)
             print("Total Syllables in Article: ", n_syllables)
