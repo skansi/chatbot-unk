@@ -1,7 +1,6 @@
 
 # improved LSTM_train.py -> bigger dataset, formatted data (specified vocabulary), bigger NN, more parameters...
 
-import numpy
 from keras.models import Sequential
 from keras.layers import Dense, Flatten
 from keras.layers import Dropout
@@ -10,26 +9,23 @@ from keras.optimizers import Adam, Nadam, RMSprop
 from keras.callbacks import ModelCheckpoint
 from keras.utils import np_utils
 from keras.models import load_model
+import numpy
 import os
+import os.path
 import pickle
 import sys
+from hyphen import Hyphenator, dict_info
+from hyphen.dictools import *
 
 MODEL = '/home/novak_luka93/chatbot-unk/character_based_version/v1.1/LSTM_model.h5'
 MODEL_WEIGHTS = '/home/novak_luka93/chatbot-unk/character_based_version/v1.1/LSTM_model_weights.h5'
 ROOTDIR = '/home/novak_luka93/wikidump'
-VOCABULARY = '/home/novak_luka93/chatbot-unk/character_based_version/v1.1/vocab2'
-CHAR_DICT = '/home/novak_luka93/chatbot-unk/character_based_version/v1.1/char_dict.pkl'
+VOCABULARY = '/home/novak_luka93/chatbot-unk/character_based_version/v1.1/syllable_vocab.pkl'
+SYLLABLE_DICT = '/home/novak_luka93/chatbot-unk/character_based_version/v1.1/syllable_dict.pkl'
 
-# # create vocabulary with all ascii characters
-# L = list(range(128))
-# VOCAB = list(''.join(map(chr, L)))
-
-# list of all allowed characters
-with open(VOCABULARY, 'r', encoding='utf-8') as v:
-    VOCAB = eval(v.read())
-
-VOCAB = sorted(VOCAB)
-print(VOCAB)
+# list of all allowed syllables
+with open(VOCABULARY, 'rb') as v:
+    VOCAB = pickle.load(v)
 
 # hyperparameters
 NUM_EPOCH = 10
@@ -39,18 +35,28 @@ VERBOSE = 1
 DATA_SIZE = 512100
 CONTEXT = 100
 VOCAB_SIZE = len(VOCAB)
+# OPTIMIZER = Adam(lr=0.001, beta_1=0.9, beta_2=0.999, epsilon=1e-08, decay=1e-03)
+OPTIMIZER = RMSprop(decay=1e-03)
+METRICS = ['accuracy']
 INPUT_SHAPE = (CONTEXT, VOCAB_SIZE)
 print('Input shape:', INPUT_SHAPE)
 
-# create mapping of unique chars to integers
-char_to_int = dict((c, i) for i, c in enumerate(VOCAB))
-print(char_to_int)
+# specify and create syllable splitter
+h_en = Hyphenator('en_US')
 
-# saving dictionary for model prediction
-with open(CHAR_DICT, 'wb') as f:
-    pickle.dump(char_to_int, f, pickle.HIGHEST_PROTOCOL)
+# check if dictionary already exists then load it, else create it and save it for the future
+if os.path.isfile(SYLLABLE_DICT):
+    with open(SYLLABLE_DICT, 'rb') as f:
+        syllable_to_int = pickle.load(f)
+else:
+    # create mapping of unique chars to integers
+    syllable_to_int = dict((c, i) for i, c in enumerate(VOCAB))
 
-# define the LSTM model
+    # saving dictionary for model prediction
+    with open(SYLLABLE_DICT, 'wb+') as f:
+        pickle.dump(syllable_to_int, f, pickle.HIGHEST_PROTOCOL)
+
+# define the LSTM model, compile it and save it
 model = Sequential()
 model.add(LSTM(NUM_HIDDEN, input_shape=INPUT_SHAPE, batch_size=BATCH_SIZE, return_sequences=True))
 model.add(Dropout(0.3))
@@ -59,17 +65,14 @@ model.add(Dropout(0.25))
 model.add(LSTM(NUM_HIDDEN, return_sequences=True))
 model.add(Dropout(0.2))
 model.add(LSTM(NUM_HIDDEN))
-# model.add(Flatten())
 model.add(Dense(units=VOCAB_SIZE, activation='softmax'))
 model.summary()
 
-#adam_optimizer = Adam(lr=0.001, beta_1=0.9, beta_2=0.999, epsilon=1e-08, decay=1e-03)
-adam_optimizer = RMSprop(decay=1e-03)
-
-model.compile(loss='categorical_crossentropy', optimizer=adam_optimizer, verbose=VERBOSE, metrics=['accuracy'])
+model.compile(loss='categorical_crossentropy', optimizer=OPTIMIZER, verbose=VERBOSE, metrics=METRICS)
 
 model.save(MODEL)
 
+# walk the filetree, split the data in syllables, create saples and labels for each sample, load the model and train it
 for subdir, dirs, files in os.walk(ROOTDIR):
     name = str(subdir).split('/')[-1]
     print(subdir)
@@ -79,10 +82,11 @@ for subdir, dirs, files in os.walk(ROOTDIR):
         print('Working on file:', f)
         SOURCE = str(subdir) + '/' + str(f)
 
-	# load text and covert to lowercase
+        # load text and covert to lowercase
         text = open(SOURCE, encoding='utf-8').read()
         text = text.lower()
 
+        # check the size of the data and see if splitting is needed
         repeat = 1
 
         if len(text) >= 2*DATA_SIZE:
@@ -96,65 +100,65 @@ for subdir, dirs, files in os.walk(ROOTDIR):
 
         for i in range(repeat):
 
-            # text_list = raw_text.split(' ')
-            # i = 0
-            # while i < len(text_list):
-            #     if text_list[i] == '':
-            #         text_list.pop(i)
-            #         continue
-            #     else:
-            #         text_list[i] = text_list[i].strip()
-            #         i += 1
-            #
-            # raw_text = ' '.join(text_list)
-
             if i == 0:
                 raw_text = text[:DATA_SIZE]
             else:
                 raw_text = text[DATA_SIZE:2*DATA_SIZE]
 
+            text_list = raw_text.split()
+
+            syllables_list = []
+
+            # split the data on syllables
+            for i in text_list:
+                try:
+                    l = h_en.syllables(word)
+                    for s in l:
+                        if l.index(s) == (len(l) - 1):
+                            s = s + ' '
+                        syllables[s] = syllables.setdefault(s, 0) + 1
+                except ValueError:
+                    print(word)
+                    
     		# summarize the loaded data
-            n_chars = len(raw_text)
-            # n_vocab = len(chars)
-            print("Total Characters in Article: ", n_chars)
-            # print("Total Vocab: ", n_vocab)
+            n_syllables = len(syllables_list)
+            print("Total Syllables in Article: ", n_syllables)
 
     		# prepare the dataset of input to output pairs encoded as integers
             dataX = []
             dataY = []
-            for i in range(0, n_chars - CONTEXT):
+            for i in range(0, n_syllables - CONTEXT):
             	seq_in = raw_text[i:i + CONTEXT]
                 # print('Seq_in_' + str(i) + ': ' + seq_in)
             	seq_out = raw_text[i + CONTEXT]
                 # print('Seq_out_' + str(i) + ': ' + seq_out)
-            	dataX.append([char_to_int[char] for char in seq_in])
-            	dataY.append(char_to_int[seq_out])
+            	dataX.append([syllable_to_int[syllable] for syllable in seq_in])
+            	dataY.append(syllable_to_int[seq_out])
             N_SAMPLES = len(dataX)
             print("Total Number Of Samples: ", N_SAMPLES)
 
-            # normalize and one hot encode every letter from the context
+            # normalize and one hot encode every syllable from the context
             list_samples = []
             for x in dataX:
-            	x = [(i / VOCAB_SIZE) for i in x]
+            	# x = [(i / VOCAB_SIZE) for i in x]
             	list_samples.append(np_utils.to_categorical(x, num_classes=VOCAB_SIZE))
 
             # reshape X to be [samples, time steps, features]
             X = numpy.reshape(list_samples,(N_SAMPLES, CONTEXT, VOCAB_SIZE))
             print('X:', X.shape)
 
-            # normalize
-            # X = X / float(n_vocab)
-
-            # one hot encode the output variable
+            # one hot encode the labels
             y = np_utils.to_categorical(dataY)
             y = numpy.reshape(y, (N_SAMPLES, VOCAB_SIZE))
             print('y:', y.shape)
 
+            # load the model
             model = load_model(MODEL)
 
-            # fit the model
+            # fit the model = train it on given data
             model.fit(X, y, epochs=NUM_EPOCH, batch_size=BATCH_SIZE, verbose=VERBOSE)
 
+            # save the model so that is possible to resume training when loaded again
             print('\nSaving model...\n')
             model.save(MODEL)
             model.save_weights(MODEL_WEIGHTS)
