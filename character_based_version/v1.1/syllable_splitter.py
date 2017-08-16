@@ -3,16 +3,16 @@ from hyphen.dictools import *
 import os
 import pickle
 
-ROOTDIR = '/home/prometej/Workspaces/PythonWorkspace/Resources/wikidump/A/AB'
-DEST = '/home/prometej/Workspaces/PythonWorkspace/chatbot-unk/character_based_version/v1.1/syllable_vocab.pkl'
+ROOTDIR = '/home/novak_luka93/wikidump/'
+DEST = '/home/novak_luka93/chatbot-unk/character_based_version/v1.1/syllable_vocab.pkl'
 N_MOST_COMMON = 20000
+
+syllables = {}
 
 for subdir, dirs, files in os.walk(ROOTDIR):
     name = str(subdir).split('/')[-1]
     print(subdir)
     list_files = files
-    completed = []
-    syllables = {}
 
     h_en = Hyphenator('en_US')
 
