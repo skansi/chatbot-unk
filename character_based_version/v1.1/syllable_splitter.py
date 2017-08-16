@@ -31,6 +31,8 @@ for subdir, dirs, files in os.walk(ROOTDIR):
             try:
                 l = h_en.syllables(word)
                 for s in l:
+                    if l == []:
+                        s = ' '
                     if l.index(s) == (len(l) - 1):
                         s = s + ' '
                     syllables[s] = syllables.setdefault(s, 0) + 1

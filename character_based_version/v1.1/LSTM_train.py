@@ -27,6 +27,9 @@ SYLLABLE_DICT = '/home/novak_luka93/chatbot-unk/character_based_version/v1.1/syl
 with open(VOCABULARY, 'rb') as v:
     VOCAB = pickle.load(v)
 
+# adding space character to vocabulary
+VOCAB = VOCAB + [' ']
+
 # hyperparameters
 NUM_EPOCH = 10
 BATCH_SIZE = 32
@@ -114,6 +117,8 @@ for subdir, dirs, files in os.walk(ROOTDIR):
                 try:
                     l = h_en.syllables(word)
                     for s in l:
+                        if l == []:
+                            s = ' '
                         if l.index(s) == (len(l) - 1):
                             s = s + ' '
                         syllables_list = syllables_list + [s]
