@@ -28,7 +28,8 @@ with open(VOCABULARY, 'rb') as v:
     VOCAB = pickle.load(v)
 
 # adding space character to vocabulary
-VOCAB = VOCAB + [' ']
+if ' ' not in VOCAB:
+    VOCAB = VOCAB + [' ']
 
 # hyperparameters
 NUM_EPOCH = 10
