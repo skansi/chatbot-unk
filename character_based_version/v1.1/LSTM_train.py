@@ -9,7 +9,7 @@ from keras.optimizers import Adam, Nadam, RMSprop
 from keras.callbacks import ModelCheckpoint
 from keras.utils import np_utils
 from keras.models import load_model
-import numpy
+import numpy as np
 import os
 import os.path
 import pickle
@@ -163,12 +163,12 @@ for subdir, dirs, files in os.walk(ROOTDIR):
             print('Done')
 
             # reshape X to be [samples, time steps, features]
-            X = numpy.reshape(list_samples,(N_SAMPLES, CONTEXT, VOCAB_SIZE))
+            X = np.reshape(np.array(list_samples),(N_SAMPLES, CONTEXT, VOCAB_SIZE))
             print('X:', X.shape)
 
             # one hot encode the labels
             y = np_utils.to_categorical(dataY)
-            y = numpy.reshape(y, (N_SAMPLES, VOCAB_SIZE))
+            y = np.reshape(y, (N_SAMPLES, VOCAB_SIZE))
             print('y:', y.shape)
 
             # load the model
