@@ -111,11 +111,11 @@ for subdir, dirs, files in os.walk(ROOTDIR):
                     syllables_list = syllables_list + [s]
             except ValueError:
                 print(word)
-        print('Done!')
+        print('Done!\n')
 
         print('Changing data to be written only with syllables from vocabulary...')
         syllables_list = [i for i in syllables_list if i in VOCAB]
-        print('Done')
+        print('Done!\n')
 
         # check the size of the data and see if splitting is needed
         repeat = 1
@@ -160,7 +160,7 @@ for subdir, dirs, files in os.walk(ROOTDIR):
             for x in dataX:
             	# x = [(i / VOCAB_SIZE) for i in x]
             	list_samples.append(np_utils.to_categorical(x, num_classes=VOCAB_SIZE))
-            print('Done')
+            print('Done!\n')
 
             # reshape X to be [samples, time steps, features]
             X = np.reshape(np.array(list_samples),(N_SAMPLES, CONTEXT, VOCAB_SIZE))
@@ -177,7 +177,7 @@ for subdir, dirs, files in os.walk(ROOTDIR):
             # fit the model = train it on given data
             print('Training the model...')
             model.fit(X, y, epochs=NUM_EPOCH, batch_size=BATCH_SIZE, verbose=VERBOSE)
-            print('Done')
+            print('Done!\n')
 
             # save the model so that is possible to resume training when loaded again
             print('\nSaving model...\n')
