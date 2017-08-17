@@ -27,8 +27,6 @@ SYLLABLE_DICT = '/home/novak_luka93/chatbot-unk/character_based_version/v1.1/syl
 with open(VOCABULARY, 'rb') as v:
     VOCAB = pickle.load(v)
 
-VOCAB = VOCAB[:10000]
-
 # adding space character to vocabulary
 if ' ' not in VOCAB:
     VOCAB = VOCAB + [' ']
@@ -45,12 +43,14 @@ NUM_HIDDEN = 128
 VERBOSE = 1
 DATA_SIZE = 5220
 CONTEXT = 100
-VOCAB_SIZE = len(VOCAB)
+VOCAB_SIZE = 9999 # len(VOCAB)
 # OPTIMIZER = Adam(lr=0.001, beta_1=0.9, beta_2=0.999, epsilon=1e-08, decay=1e-03)
 OPTIMIZER = RMSprop(decay=1e-03)
 METRICS = ['accuracy']
 INPUT_SHAPE = (CONTEXT, VOCAB_SIZE)
 print('Input shape:', INPUT_SHAPE)
+
+VOCAB = VOCAB[:VOCAB_SIZE]
 
 # specify and create syllable splitter
 h_en = Hyphenator('en_US')
