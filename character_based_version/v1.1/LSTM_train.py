@@ -37,7 +37,7 @@ BATCH_SIZE = 32
 NUM_HIDDEN = 128
 VERBOSE = 1
 DATA_SIZE = 5220
-CONTEXT = 100
+CONTEXT = 30
 VOCAB_SIZE = 10000 # len(VOCAB)
 # OPTIMIZER = Adam(lr=0.001, beta_1=0.9, beta_2=0.999, epsilon=1e-08, decay=1e-03)
 OPTIMIZER = RMSprop(decay=1e-03)
