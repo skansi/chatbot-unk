@@ -6,6 +6,7 @@ from keras.optimizers import Adam, Nadam, RMSprop
 from keras.callbacks import ModelCheckpoint
 from keras.utils import np_utils
 from keras.models import load_model
+from keras import regularizers
 import numpy as np
 import os
 import os.path
@@ -52,11 +53,11 @@ else:
 
 # define the LSTM model, compile it and save it
 model = Sequential()
-model.add(LSTM(NUM_HIDDEN, input_shape=INPUT_SHAPE, batch_size=BATCH_SIZE, return_sequences=True))
-model.add(Dropout(0.3))
-model.add(LSTM(NUM_HIDDEN, return_sequences=True))
+model.add(LSTM(NUM_HIDDEN, input_shape=INPUT_SHAPE, batch_size=BATCH_SIZE, return_sequences=True, kernel_regularizer=regularizers.l2(0.01), recurrent_regularizer=regularizers.l2(0.01), bias_regularizer=regularizers.l2(0.01)))
+model.add(Dropout(0.2))
+model.add(LSTM(NUM_HIDDEN, return_sequences=True, kernel_regularizer=regularizers.l2(0.01), recurrent_regularizer=regularizers.l2(0.01), bias_regularizer=regularizers.l2(0.01))
 model.add(Dropout(0.25))
-model.add(LSTM(NUM_HIDDEN))
+model.add(LSTM(NUM_HIDDEN, kernel_regularizer=regularizers.l2(0.01), bias_regularizer=regularizers.l2(0.01))
 model.add(Dropout(0.2))
 model.add(Dense(units=VOCAB_SIZE, activation='softmax'))
 model.summary()
