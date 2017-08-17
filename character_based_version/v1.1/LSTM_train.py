@@ -30,6 +30,11 @@ with open(VOCABULARY, 'rb') as v:
 # adding space character to vocabulary
 if ' ' not in VOCAB:
     VOCAB = VOCAB + [' ']
+# if '$' not in VOCAB:
+#     VOCAB = VOCAB + ['$']
+# if '#' not in VOCAB:
+#     VOCAB = VOCAB + ['#']
+
 
 # hyperparameters
 NUM_EPOCH = 10
@@ -89,14 +94,32 @@ for subdir, dirs, files in os.walk(ROOTDIR):
         # load text and covert to lowercase
         text = open(SOURCE, encoding='utf-8').read()
         text = text.lower()
+        text_list = text.split()
+
+        syllables_list = []
+
+        # split the data on syllables
+        for word in text_list:
+            try:
+                l = h_en.syllables(word)
+                for s in l:
+                    if l == []:
+                        s = ' '
+                    if l.index(s) == (len(l) - 1):
+                        s = s + ' '
+                    syllables_list = syllables_list + [s]
+            except ValueError:
+                print(word)
+
+        syllables_list = [i for i in syllables_list if i in VOCAB]
 
         # check the size of the data and see if splitting is needed
         repeat = 1
 
-        if len(text) >= 2*DATA_SIZE:
+        if len(syllables_list) >= 2*DATA_SIZE:
             repeat = 2
             print('Data split in 2 becauseof its size!')
-        elif len(text) > DATA_SIZE:
+        elif len(syllables_list) > DATA_SIZE:
             print('Data shrinked to certain size to fit the net!')
         else:
             print('Data too small! Skipping...')
@@ -105,26 +128,9 @@ for subdir, dirs, files in os.walk(ROOTDIR):
         for i in range(repeat):
 
             if i == 0:
-                raw_text = text[:DATA_SIZE]
+                raw_text = syllables_list[:DATA_SIZE]
             else:
-                raw_text = text[DATA_SIZE:2*DATA_SIZE]
-
-            text_list = raw_text.split()
-
-            syllables_list = []
-
-            # split the data on syllables
-            for word in text_list:
-                try:
-                    l = h_en.syllables(word)
-                    for s in l:
-                        if l == []:
-                            s = ' '
-                        if l.index(s) == (len(l) - 1):
-                            s = s + ' '
-                        syllables_list = syllables_list + [s]
-                except ValueError:
-                    print(word)
+                raw_text = syllables_list[DATA_SIZE:2*DATA_SIZE]
 
     		# summarize the loaded data
             n_syllables = len(syllables_list)
