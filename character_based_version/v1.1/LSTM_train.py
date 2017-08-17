@@ -36,8 +36,8 @@ NUM_EPOCH = 10
 BATCH_SIZE = 32
 NUM_HIDDEN = 128
 VERBOSE = 1
-DATA_SIZE = 5220
 CONTEXT = 100
+DATA_SIZE = 5120 + CONTEXT
 VOCAB_SIZE = 10000 # len(VOCAB)
 # OPTIMIZER = Adam(lr=0.001, beta_1=0.9, beta_2=0.999, epsilon=1e-08, decay=1e-03)
 OPTIMIZER = RMSprop(decay=1e-03)
@@ -69,9 +69,8 @@ model.add(LSTM(NUM_HIDDEN, input_shape=INPUT_SHAPE, batch_size=BATCH_SIZE, retur
 model.add(Dropout(0.3))
 model.add(LSTM(NUM_HIDDEN, return_sequences=True))
 model.add(Dropout(0.25))
-model.add(LSTM(NUM_HIDDEN, return_sequences=True))
-model.add(Dropout(0.2))
 model.add(LSTM(NUM_HIDDEN))
+model.add(Dropout(0.2))
 model.add(Dense(units=VOCAB_SIZE, activation='softmax'))
 model.summary()
 
@@ -118,9 +117,9 @@ for subdir, dirs, files in os.walk(ROOTDIR):
         # check the size of the data and see if splitting is needed
         repeat = 1
 
-        if len(syllables_list) >= 2*DATA_SIZE:
+        if len(syllables_list) >= (2*DATA_SIZE + 100):
             repeat = 2
-            print('Data split in 2 becauseof its size!\n')
+            print('Data split in 2 because of its size!\n')
         elif len(syllables_list) > DATA_SIZE:
             print('Data shrinked to certain size to fit the net!\n')
         else:
