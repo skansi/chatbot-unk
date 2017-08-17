@@ -27,6 +27,8 @@ SYLLABLE_DICT = '/home/novak_luka93/chatbot-unk/character_based_version/v1.1/syl
 with open(VOCABULARY, 'rb') as v:
     VOCAB = pickle.load(v)
 
+VOCAB = VOCAB[:10000]
+
 # adding space character to vocabulary
 if ' ' not in VOCAB:
     VOCAB = VOCAB + [' ']
@@ -99,7 +101,7 @@ for subdir, dirs, files in os.walk(ROOTDIR):
         syllables_list = []
 
         # split the data on syllables
-        print('Splitting data to syllables...')
+        print('> Splitting data to syllables...')
         for word in text_list:
             try:
                 l = h_en.syllables(word)
@@ -113,7 +115,7 @@ for subdir, dirs, files in os.walk(ROOTDIR):
                 print(word)
         print('Done!\n')
 
-        print('Changing data to be written only with syllables from vocabulary...')
+        print('> Changing data to be written only with syllables from vocabulary...')
         syllables_list = [i for i in syllables_list if i in VOCAB]
         print('Done!\n')
 
@@ -140,7 +142,7 @@ for subdir, dirs, files in os.walk(ROOTDIR):
             n_syllables = len(raw_text)
             print("Total Syllables in Article: ", n_syllables)
 
-            print('Preparing the dataset...')
+            print('> Preparing the dataset...')
     		# prepare the dataset of input to output pairs encoded as integers
             dataX = []
             dataY = []
@@ -155,7 +157,7 @@ for subdir, dirs, files in os.walk(ROOTDIR):
             print("Done.\nTotal Number Of Samples: ", N_SAMPLES)
 
             # normalize and one hot encode every syllable from the context
-            print('One-hot-encoding the training data...')
+            print('> One-hot-encoding the training data...')
             list_samples = []
             for x in dataX:
             	# x = [(i / VOCAB_SIZE) for i in x]
@@ -175,12 +177,12 @@ for subdir, dirs, files in os.walk(ROOTDIR):
             model = load_model(MODEL)
 
             # fit the model = train it on given data
-            print('Training the model...')
+            print('> Training the model...')
             model.fit(X, y, epochs=NUM_EPOCH, batch_size=BATCH_SIZE, verbose=VERBOSE)
             print('Done!\n')
 
             # save the model so that is possible to resume training when loaded again
-            print('\nSaving model...\n')
+            print('\n> Saving model...\n')
             model.save(MODEL)
             model.save_weights(MODEL_WEIGHTS)
             print('Saved!\n')
