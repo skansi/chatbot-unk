@@ -27,15 +27,6 @@ SYLLABLE_DICT = '/home/novak_luka93/chatbot-unk/character_based_version/v1.1/syl
 with open(VOCABULARY, 'rb') as v:
     VOCAB = pickle.load(v)
 
-# adding space character to vocabulary
-if ' ' not in VOCAB:
-    VOCAB = VOCAB + [' ']
-# if '$' not in VOCAB:
-#     VOCAB = VOCAB + ['$']
-# if '#' not in VOCAB:
-#     VOCAB = VOCAB + ['#']
-
-
 # hyperparameters
 NUM_EPOCH = 10
 BATCH_SIZE = 32
@@ -48,9 +39,14 @@ VOCAB_SIZE = 9999 # len(VOCAB)
 OPTIMIZER = RMSprop(decay=1e-03)
 METRICS = ['accuracy']
 INPUT_SHAPE = (CONTEXT, VOCAB_SIZE)
-print('Input shape:', INPUT_SHAPE)
 
 VOCAB = VOCAB[:VOCAB_SIZE]
+
+# adding space character to vocabulary
+if ' ' not in VOCAB:
+    VOCAB = VOCAB + [' ']
+
+print('Input shape:', INPUT_SHAPE)
 
 # specify and create syllable splitter
 h_en = Hyphenator('en_US')
@@ -101,7 +97,7 @@ for subdir, dirs, files in os.walk(ROOTDIR):
         syllables_list = []
 
         # split the data on syllables
-        print('> Splitting data to syllables...')
+        print('\n> Splitting data to syllables...')
         for word in text_list:
             try:
                 l = h_en.syllables(word)
