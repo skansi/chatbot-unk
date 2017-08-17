@@ -167,7 +167,7 @@ for subdir, dirs, files in os.walk(ROOTDIR):
             # one hot encode the labels
             print('\nDataY size:', len(dataY))
             print()
-            y = np_utils.to_categorical(dataY)
+            y = np_utils.to_categorical(dataY, num_classes=VOCAB_SIZE)
             y = np.reshape(y, (N_SAMPLES, VOCAB_SIZE))
             print('y:', y.shape)
 
