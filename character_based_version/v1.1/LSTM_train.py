@@ -124,11 +124,11 @@ for subdir, dirs, files in os.walk(ROOTDIR):
 
         if len(syllables_list) >= 2*DATA_SIZE:
             repeat = 2
-            print('Data split in 2 becauseof its size!')
+            print('Data split in 2 becauseof its size!\n')
         elif len(syllables_list) > DATA_SIZE:
-            print('Data shrinked to certain size to fit the net!')
+            print('Data shrinked to certain size to fit the net!\n')
         else:
-            print('Data too small! Skipping...')
+            print('Data too small! Skipping...\n')
             continue
 
         for i in range(repeat):
@@ -142,7 +142,7 @@ for subdir, dirs, files in os.walk(ROOTDIR):
             n_syllables = len(raw_text)
             print("Total Syllables in Article: ", n_syllables)
 
-            print('> Preparing the dataset...')
+            print('\n> Preparing the dataset...')
     		# prepare the dataset of input to output pairs encoded as integers
             dataX = []
             dataY = []
@@ -154,15 +154,15 @@ for subdir, dirs, files in os.walk(ROOTDIR):
             	dataX.append([syllable_to_int[syllable] for syllable in seq_in])
             	dataY.append(syllable_to_int[seq_out])
             N_SAMPLES = len(dataX)
-            print("Done.\nTotal Number Of Samples: ", N_SAMPLES)
+            print("Done.\n\nTotal Number Of Samples: ", N_SAMPLES)
 
             # normalize and one hot encode every syllable from the context
-            print('> One-hot-encoding the training data...')
+            print('\n> One-hot-encoding the training data...')
             list_samples = []
             for x in dataX:
             	# x = [(i / VOCAB_SIZE) for i in x]
             	list_samples.append(np_utils.to_categorical(x, num_classes=VOCAB_SIZE))
-            print('Done!\n')
+            print('Done!\n\n')
 
             # reshape X to be [samples, time steps, features]
             X = np.reshape(np.array(list_samples),(N_SAMPLES, CONTEXT, VOCAB_SIZE))
@@ -177,7 +177,7 @@ for subdir, dirs, files in os.walk(ROOTDIR):
             model = load_model(MODEL)
 
             # fit the model = train it on given data
-            print('> Training the model...')
+            print('\n> Training the model...')
             model.fit(X, y, epochs=NUM_EPOCH, batch_size=BATCH_SIZE, verbose=VERBOSE)
             print('Done!\n')
 
