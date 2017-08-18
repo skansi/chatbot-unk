@@ -89,7 +89,7 @@ for subdir, dirs, files in os.walk(ROOTDIR):
         # check the size of the data and see if splitting is needed
         repeat = 1
 
-        if len(text_list) >= (2*DATA_SIZE + 100):
+        if len(text_list) >= (2*DATA_SIZE):
             repeat = 2
             print('Data split in 2 because of its size!\n')
         elif len(text_list) > DATA_SIZE:
