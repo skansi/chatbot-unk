@@ -1,6 +1,6 @@
 from keras.models import Sequential
 from keras.layers import Dense, Flatten
-from keras.layers import Dropout
+from keras.layers import Dropout, Activation
 from keras.layers.recurrent import LSTM, GRU, SimpleRNN
 from keras.optimizers import Adam, Nadam, RMSprop
 from keras.callbacks import ModelCheckpoint
@@ -59,8 +59,9 @@ model.add(Dropout(0.2))
 model.add(LSTM(NUM_HIDDEN, return_sequences=True, kernel_regularizer=regularizers.l2(0.01), recurrent_regularizer=regularizers.l2(0.01), bias_regularizer=regularizers.l2(0.01)))
 model.add(Dropout(0.25))
 model.add(LSTM(NUM_HIDDEN, kernel_regularizer=regularizers.l2(0.01), bias_regularizer=regularizers.l2(0.01)))
-model.add(TimeDistributed(Dropout(0.2)))
-model.add(Dense(units=VOCAB_SIZE, activation='softmax'))
+model.add(Dropout(0.2))
+model.add(TimeDistributed(Dense(units=VOCAB_SIZE)))
+model.add(Activation('softmax'))
 model.summary()
 
 model.compile(loss='categorical_crossentropy', optimizer=OPTIMIZER, verbose=VERBOSE, metrics=METRICS)
