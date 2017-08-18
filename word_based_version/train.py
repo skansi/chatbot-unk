@@ -7,6 +7,7 @@ from keras.callbacks import ModelCheckpoint
 from keras.utils import np_utils
 from keras.models import load_model
 from keras import regularizers
+from keras.layers.wrappers import TimeDistributed
 import numpy as np
 import os
 import os.path
@@ -58,7 +59,7 @@ model.add(Dropout(0.2))
 model.add(LSTM(NUM_HIDDEN, return_sequences=True, kernel_regularizer=regularizers.l2(0.01), recurrent_regularizer=regularizers.l2(0.01), bias_regularizer=regularizers.l2(0.01)))
 model.add(Dropout(0.25))
 model.add(LSTM(NUM_HIDDEN, kernel_regularizer=regularizers.l2(0.01), bias_regularizer=regularizers.l2(0.01)))
-model.add(Dropout(0.2))
+model.add(TimeDistributed(Dropout(0.2)))
 model.add(Dense(units=VOCAB_SIZE, activation='softmax'))
 model.summary()
 
