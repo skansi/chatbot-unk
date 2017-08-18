@@ -79,9 +79,9 @@ for subdir, dirs, files in os.walk(ROOTDIR):
         dataX = []
         dataY = []
         for index in range(0, len(text_list) - CONTEXT):
-            seq_in = raw_text[index:index + CONTEXT]
+            seq_in = text_list[index:index + CONTEXT]
             # print('Seq_in_' + str(i) + ': ' + seq_in)
-            seq_out = raw_text[index + CONTEXT]
+            seq_out = text_list[index + CONTEXT]
             # print('Seq_out_' + str(i) + ': ' + seq_out)
             dataX.append([word_to_int[word] for word in seq_in])
             dataY.append(word_to_int[seq_out])
