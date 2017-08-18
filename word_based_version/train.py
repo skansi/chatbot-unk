@@ -60,7 +60,7 @@ model.add(LSTM(NUM_HIDDEN, return_sequences=True, kernel_regularizer=regularizer
 model.add(Dropout(0.25))
 model.add(LSTM(NUM_HIDDEN, kernel_regularizer=regularizers.l2(0.01), bias_regularizer=regularizers.l2(0.01)))
 model.add(Dropout(0.2))
-model.add(TimeDistributed(Dense(units=VOCAB_SIZE)))
+model.add(Dense(units=VOCAB_SIZE))
 model.add(Activation('softmax'))
 model.summary()
 
