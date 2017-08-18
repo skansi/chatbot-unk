@@ -83,8 +83,8 @@ for subdir, dirs, files in os.walk(ROOTDIR):
             # print('Seq_in_' + str(i) + ': ' + seq_in)
             seq_out = text_list[index + CONTEXT]
             # print('Seq_out_' + str(i) + ': ' + seq_out)
-            dataX.append([word_to_int[word] for word in seq_in])
-            dataY.append(word_to_int[seq_out])
+            dataX.append([char_to_int[word] for word in seq_in])
+            dataY.append(char_to_int[seq_out])
         N_SAMPLES = len(dataX)
         print("Done.\n\nTotal Number Of Samples: ", N_SAMPLES)
 
