@@ -78,7 +78,7 @@ for subdir, dirs, files in os.walk(ROOTDIR):
         # prepare the dataset of input to output pairs encoded as integers
         dataX = []
         dataY = []
-        for index in range(0, n_words - CONTEXT):
+        for index in range(0, len(text_list) - CONTEXT):
             seq_in = raw_text[index:index + CONTEXT]
             # print('Seq_in_' + str(i) + ': ' + seq_in)
             seq_out = raw_text[index + CONTEXT]
