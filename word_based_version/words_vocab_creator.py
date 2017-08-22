@@ -1,11 +1,12 @@
 import os
 import pickle
+from nltk.stem import WordNetLemmatizer
 
-ROOTDIR = '/home/novak_luka93/wikidump/'
-DEST = '/home/novak_luka93/chatbot-unk/word_based_version/words_vocab.pkl'
-N_MOST_COMMON = 20000
+ROOTDIR = '/home/prometej/Workspaces/PythonWorkspace/Resources/wikidump'
+DEST_L = '/home/prometej/Workspaces/PythonWorkspace/chatbot-unk/word_based_version/words_lemmatized_vocab.pkl'
 
-words = {}
+lemmatizer = WordNetLemmatizer()
+words_lemma = {}
 
 for subdir, dirs, files in os.walk(ROOTDIR):
     name = str(subdir).split('/')[-1]
@@ -17,22 +18,19 @@ for subdir, dirs, files in os.walk(ROOTDIR):
         SOURCE = str(subdir) + '/' + str(f)
 
         # load text and covert to lowercase
-        text = open(SOURCE, encoding='utf-8').read()
+        with open(SOURCE, 'r') as f:
+            text = f.read()
         text = text.lower()
-        print('Size:', len(text))
-
         text_as_list = text.split(' ')
+        print('Size:', len(text_as_list))
 
         for word in text_as_list:
-            words[word] = words.setdefault(word, 0) + 1
+            w_l = lemmatizer.lemmatize(word)
+            words_lemma[w_l] = words_lemma.setdefault(word, 0) + 1
 
-words_sorted = sorted(words.keys(), key=words.get, reverse=True)
+words_lemma_sorted = sorted(words_lemma.keys(), key=words_lemma.get, reverse=True)
 
-words_top_n = words_sorted[:N_MOST_COMMON]
+print('Number of distinct lemmatized words: ', len(words_lemma))
 
-print('Top n words:', words_top_n)
-print('N: ', len(words_top_n))
-print('len(words):', len(words.keys()))
-
-with open(DEST, 'wb+') as d:
-    pickle.dump(words_top_n, d)
+with open(DEST_L, 'wb+') as d:
+    pickle.dump(words_lemma, d)

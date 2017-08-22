@@ -8,21 +8,28 @@ from keras.utils import np_utils
 from keras.models import load_model
 from keras import regularizers
 from keras.layers.wrappers import TimeDistributed
+from nltk.stem import WordNetLemmatizer
 import numpy as np
 import os
 import os.path
 import pickle
 import sys
 
-MODEL = '/home/novak_luka93/chatbot-unk/word_based_version/model.h5'
-MODEL_WEIGHTS = '/home/novak_luka93/chatbot-unk/word_based_version/model_weights.h5'
-ROOTDIR = '/home/novak_luka93/wikidump'
-VOCABULARY = '/home/novak_luka93/chatbot-unk/word_based_version/words_vocab.pkl'
-WORD_DICT = '/home/novak_luka93/chatbot-unk/word_based_version/word_dict.pkl'
+MODEL = '/home/prometej/Workspaces/PythonWorkspace/chatbot-unk/word_based_version/model.h5'
+MODEL_WEIGHTS = '/home/prometej/Workspaces/PythonWorkspace/chatbot-unk/word_based_version/model_weights.h5'
+ROOTDIR = '/home/prometej/Workspaces/PythonWorkspace/Resources/wikidump'
+VOCABULARY_LEMMATIZED = '/home/prometej/Workspaces/PythonWorkspace/chatbot-unk/word_based_version/words_lemmatized_vocab.pkl'
+WORD_DICT_LEMMA = '/home/prometej/Workspaces/PythonWorkspace/chatbot-unk/word_based_version/lemma_word_dict.pkl'
+
+NUM_WORDS = 10000
 
 # list of all allowed words
-with open(VOCABULARY, 'rb') as v:
+with open(VOCABULARY_LEMMATIZED, 'rb') as v:
     VOCAB = pickle.load(v)
+
+VOCAB = sorted(VOCAB.keys())
+
+VOCAB = VOCAB[:NUM_WORDS]
 
 # hyperparameters
 NUM_EPOCH = 10
@@ -39,26 +46,28 @@ INPUT_SHAPE = (CONTEXT, VOCAB_SIZE)
 
 print('Input shape:', INPUT_SHAPE)
 
+lemmatizer = WordNetLemmatizer()
+
 # check if dictionary already exists then load it, else create it and save it for the future
-if os.path.isfile(WORD_DICT):
-    with open(WORD_DICT, 'rb') as f:
+if os.path.isfile(WORD_DICT_LEMMA):
+    with open(WORD_DICT_LEMMA, 'rb') as f:
         word_to_int = pickle.load(f)
 else:
     # create mapping of unique chars to integers
     word_to_int = dict((c, i) for i, c in enumerate(VOCAB))
 
     # saving dictionary for model prediction
-    with open(WORD_DICT, 'wb+') as f:
+    with open(WORD_DICT_LEMMA, 'wb+') as f:
         pickle.dump(word_to_int, f, pickle.HIGHEST_PROTOCOL)
 
 
 # define the LSTM model, compile it and save it
 model = Sequential()
-model.add(LSTM(NUM_HIDDEN, input_shape=INPUT_SHAPE, batch_size=BATCH_SIZE, return_sequences=True, kernel_regularizer=regularizers.l2(0.01), recurrent_regularizer=regularizers.l2(0.01), bias_regularizer=regularizers.l2(0.01)))
+model.add(LSTM(NUM_HIDDEN, input_shape=INPUT_SHAPE, batch_size=BATCH_SIZE, return_sequences=True))
 model.add(Dropout(0.2))
-model.add(LSTM(NUM_HIDDEN, return_sequences=True, kernel_regularizer=regularizers.l2(0.01), recurrent_regularizer=regularizers.l2(0.01), bias_regularizer=regularizers.l2(0.01)))
+model.add(LSTM(NUM_HIDDEN, return_sequences=True))
 model.add(Dropout(0.25))
-model.add(LSTM(NUM_HIDDEN, kernel_regularizer=regularizers.l2(0.01), bias_regularizer=regularizers.l2(0.01)))
+model.add(LSTM(NUM_HIDDEN))
 model.add(Dropout(0.2))
 model.add(Dense(units=VOCAB_SIZE))
 model.add(Activation('softmax'))
@@ -68,7 +77,8 @@ model.compile(loss='categorical_crossentropy', optimizer=OPTIMIZER, verbose=VERB
 
 model.save(MODEL)
 
-
+print('\n\n' + '*'*46)
+print('> Starting.... Walking the file tree and learning on every file')
 # walk the filetree, split the data in syllables, create saples and labels for each sample, load the model and train it
 for subdir, dirs, files in os.walk(ROOTDIR):
     name = str(subdir).split('/')[-1]
@@ -82,20 +92,34 @@ for subdir, dirs, files in os.walk(ROOTDIR):
         text = text.lower()
         text_list = text.split()
 
+        print('\n\n' + '*'*46)
         print('> Changing data to be written only with words from vocabulary...')
         text_list = [i for i in text_list if i in VOCAB]
-        print('Done!\n')
+        print('Done!')
+        print('*'*46 + '\n\n')
+
+        print('*'*46)
+        print('> Lemmatizing data....')
+        # lemmatizing data
+        for w in range(len(text_list)):
+            word = lemmatizer.lemmatize(text_list[w])
+            if word not in VOCAB:
+                text_list.remove(text_list[w])
+            else:
+                text_list[w] = word
+        print('Done!')
+        print('*'*46 + '\n\n')
 
         # check the size of the data and see if splitting is needed
         repeat = 1
 
         if len(text_list) >= (2*DATA_SIZE):
             repeat = 2
-            print('Data split in 2 because of its size!\n')
+            print('Data split in 2 because of its size!\n\n')
         elif len(text_list) > DATA_SIZE:
-            print('Data shrinked to certain size to fit the net!\n')
+            print('Data shrinked to certain size to fit the net!\n\n')
         else:
-            print('Data too small! Skipping...\n')
+            print('Data too small! Skipping...\n\n')
             continue
 
         for i in range(repeat):
@@ -107,9 +131,10 @@ for subdir, dirs, files in os.walk(ROOTDIR):
 
     		# summarize the loaded data
             n_words = len(raw_text)
-            print("Total Syllables in Article: ", n_words)
+            print("Total Number of Words in Article: ", n_words)
 
-            print('\n> Preparing the dataset...')
+            print('\n\n' + '*'*46)
+            print('> Preparing the dataset...')
     		# prepare the dataset of input to output pairs encoded as integers
             dataX = []
             dataY = []
@@ -122,33 +147,39 @@ for subdir, dirs, files in os.walk(ROOTDIR):
             	dataY.append(word_to_int[seq_out])
             N_SAMPLES = len(dataX)
             print("Done.\n\nTotal Number Of Samples: ", N_SAMPLES)
+            print('*'*46 + '\n\n')
 
+            print('*'*46)
             # normalize and one hot encode every syllable from the context
-            print('\n> One-hot-encoding the training data...')
+            print('> One-hot-encoding the training data...')
             list_samples = []
             for x in dataX:
             	# x = [(i / VOCAB_SIZE) for i in x]
             	list_samples.append(np_utils.to_categorical(x, num_classes=VOCAB_SIZE))
-            print('Done!\n\n')
+            print('Done!')
+            print('*'*46 + '\n\n')
 
+            print('*'*46)
+            print('Data:\n')
             # reshape X to be [samples, time steps, features]
             X = np.reshape(np.array(list_samples),(N_SAMPLES, CONTEXT, VOCAB_SIZE))
             print('X:', X.shape)
 
             # one hot encode the labels
-            print('\nDataY size:', len(dataY))
-            print()
             y = np_utils.to_categorical(dataY, num_classes=VOCAB_SIZE)
             y = np.reshape(y, (N_SAMPLES, VOCAB_SIZE))
             print('y:', y.shape)
+            print('*'*46 + '\n\n')
 
             # load the model
             model = load_model(MODEL)
 
+            print('*'*46)
             # fit the model = train it on given data
-            print('\n> Training the model...')
+            print('> Training the model...')
             model.fit(X, y, epochs=NUM_EPOCH, batch_size=BATCH_SIZE, verbose=VERBOSE)
             print('Done!\n')
+            print('*'*46 + '\n\n')
 
             # save the model so that is possible to resume training when loaded again
             print('\n> Saving model...\n')
