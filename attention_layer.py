@@ -84,28 +84,27 @@ class Attention(Dense):
 
         return output_shape
 
-HIDDEN_SIZE = 50
-BATCH_SIZE = 128
-VOCAB_SIZE = 70000
+HIDDEN_SIZE = 300
+BATCH_SIZE = 32
+VOCAB_SIZE = 10000
+CONTEXT = 100
+INPUT_SHAPE = (CONTEXT, VOCAB_SIZE)
 
 """
-The language model uses CharCNN embedding and
+The deep attentive language model 
 consists of a 2-layer bidirectional GRU
-(BiGRU) with an attention mechanism, for identifying
+with an attention mechanism for identifying
 the most informative words.
 """
 print('Build model...')
 model = Sequential()
-# CharCNN
-#model.add(Conv1D(HIDDEN_SIZE, (3, 3), activation='tanh', input_shape=(None, 128)))
-#model.add(MaxPooling1D(pool_size=2))
-# replace embedding with charCNN
-# add dropouts
-model.add(Embedding(input_dim=30000, output_dim=HIDDEN_SIZE, batch_size=BATCH_SIZE, input_shape=(200,)))
+#model.add(Embedding(input_dim=VOCAB_SIZE, output_dim=HIDDEN_SIZE, batch_size=BATCH_SIZE, input_shape=INPUT_SHAPE))
+model.add(Bidirectional(layer=GRU(HIDDEN_SIZE, return_sequences=True), merge_mode='concat', input_shape=INPUT_SHAPE, batch_size=BATCH_SIZE))
+model.add(Dropout(0.3))
 model.add(Bidirectional(layer=GRU(HIDDEN_SIZE, return_sequences=True), merge_mode='concat'))
-model.add(Bidirectional(layer=GRU(HIDDEN_SIZE, return_sequences=True), merge_mode='concat'))
-model.add(Attention(units=2*HIDDEN_SIZE, activation='tanh'))
-model.add(GRU(units=2*HIDDEN_SIZE))
+model.add(Dropout(0.3))
+model.add(Attention(units=2*HIDDEN_SIZE, activation='tanh', return_sequences=False))
+#model.add(GRU(units=2*HIDDEN_SIZE))
 model.add(Dense(units=VOCAB_SIZE, activation='softmax'))
 
 model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
