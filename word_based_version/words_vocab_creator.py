@@ -3,7 +3,7 @@ import pickle
 from nltk.stem import WordNetLemmatizer
 
 ROOTDIR = '/home/prometej/Workspaces/PythonWorkspace/Resources/wikidump'
-DEST_L = '/home/prometej/Workspaces/PythonWorkspace/chatbot-unk/word_based_version/words_lemmatized_vocab.pkl'
+DEST_L = '/home/prometej/Workspaces/PythonWorkspace/chatbot-unk/word_based_version/file_resources/words_lemmatized_vocab.pkl'
 
 lemmatizer = WordNetLemmatizer()
 words_lemma = {}
