@@ -51,6 +51,12 @@ class Attention(Dense):
 
 if __name__ =='__main__':
 
+    HIDDEN_SIZE = 300
+    BATCH_SIZE = 32
+    VOCAB_SIZE = 10000
+    CONTEXT = 100
+    INPUT_SHAPE = (CONTEXT, VOCAB_SIZE)
+
     """
     The deep attentive language model 
     consists of a 2-layer bidirectional GRU
