@@ -31,7 +31,7 @@ class Attention(Dense):
         assert len(input_shape) == 3
         self.units = input_shape[-1]
         if self.use_context:
-            self.context = self.add_weight(name='context', 
+            self.context = self.add_weight(name='context',
                                       shape=(self.units,),
                                       initializer='glorot_uniform',
                                       trainable=True)
@@ -47,28 +47,30 @@ class Attention(Dense):
         return K.sum(inputs*weights, axis=1)
 
     def compute_output_shape(self, input_shape):
-        return (input_shape[0], input_shape[-1]) 
+        return (input_shape[0], input_shape[-1])
 
-HIDDEN_SIZE = 300
-BATCH_SIZE = 32
-VOCAB_SIZE = 10000
-CONTEXT = 100
-INPUT_SHAPE = (CONTEXT, VOCAB_SIZE)
+if __name__ =='__main__':
 
-"""
-The deep attentive language model 
-consists of a 2-layer bidirectional GRU
-with an attention mechanism for identifying
-the most informative words.
-"""
-model = Sequential()
-#model.add(Embedding(input_dim=VOCAB_SIZE, output_dim=HIDDEN_SIZE, input_shape=INPUT_SHAPE))
-model.add(Bidirectional(layer=GRU(HIDDEN_SIZE, return_sequences=True), merge_mode='concat', input_shape=INPUT_SHAPE))
-model.add(Dropout(0.3))
-model.add(Bidirectional(layer=GRU(HIDDEN_SIZE, return_sequences=True), merge_mode='concat'))
-model.add(Dropout(0.3))
-model.add(Attention(activation='tanh'))
-model.add(Dense(units=VOCAB_SIZE, activation='softmax'))
+    HIDDEN_SIZE = 300
+    BATCH_SIZE = 32
+    VOCAB_SIZE = 10000
+    CONTEXT = 100
+    INPUT_SHAPE = (CONTEXT, VOCAB_SIZE)
 
-model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
-model.summary()
+    """
+    The deep attentive language model
+    consists of a 2-layer bidirectional GRU
+    with an attention mechanism for identifying
+    the most informative words.
+    """
+    model = Sequential()
+    #model.add(Embedding(input_dim=VOCAB_SIZE, output_dim=HIDDEN_SIZE, input_shape=INPUT_SHAPE))
+    model.add(Bidirectional(layer=GRU(HIDDEN_SIZE, return_sequences=True), merge_mode='concat', input_shape=INPUT_SHAPE))
+    model.add(Dropout(0.3))
+    model.add(Bidirectional(layer=GRU(HIDDEN_SIZE, return_sequences=True), merge_mode='concat'))
+    model.add(Dropout(0.3))
+    model.add(Attention(activation='tanh'))
+    model.add(Dense(units=VOCAB_SIZE, activation='softmax'))
+
+    model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
+    model.summary()
