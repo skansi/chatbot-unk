@@ -12,7 +12,7 @@ Chatbot is implemented in Python3 using [Keras](https://keras.io/) with [Tensorf
   - [Install Keras](https://keras.io/#installation): <code>sudo pip3 install keras</code>
 
 # Usage:
-  ## ***Important***: <code>python --version</code> ==>  Python 3.5.2
+  ## ***Important***: Check that the code: <code>python --version</code> is 'Python 3.5.*'
 
   - Clone this repo
   - Download [Wikidump](https://dumps.wikimedia.org/backup-index.html) and extract it with:
@@ -27,8 +27,10 @@ Chatbot is implemented in Python3 using [Keras](https://keras.io/) with [Tensorf
   
       <code>python format_files.py</code>
   
-  - Go to [character_based_version/v1.0/vocab_formatter.py](https://github.com/skansi/chatbot-unk/blob/master/character_based_version/v1.0/vocab_formatter.py) and run:
+  - Go to [word_based_version/vocab_formatter.py](https://github.com/skansi/chatbot-unk/blob/master/word_based_version/vocab_formatter.py) and run:
    
       <code>python vocab_formatter.py</code>
 
- 
+  - Go to [word_based_version/second_model/train_word2vec.py](https://github.com/skansi/chatbot-unk/blob/master/word_based_version/second_model/train_word2vec.py) and run:
+  
+      <code>python train_word2vec.py</code>
