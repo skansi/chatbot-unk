@@ -88,8 +88,8 @@ for i in range(len(query_list)):
     query_int.append(word_to_int[query_list[i]])
 
 # padding
-input_sequence = [word_to_int['unk']]*(CONTEXT*63)
-tmp = ([word_to_int['unk']]*(CONTEXT-len(query_int)))
+input_sequence = [None]*(CONTEXT*63)
+tmp = [None]*(CONTEXT-len(query_int))
 
 # append actual query
 for i in query_int:
