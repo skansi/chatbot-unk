@@ -51,40 +51,8 @@ class Attention(Dense):
 
 if __name__ =='__main__':
 
-<<<<<<< HEAD
-"""
-The deep attentive language model 
-consists of a 2-layer bidirectional GRU
-with an attention mechanism for identifying
-the most informative words.
-"""
-model = Sequential()
-#model.add(Embedding(input_dim=VOCAB_SIZE, output_dim=HIDDEN_SIZE, input_shape=INPUT_SHAPE))
-model.add(Bidirectional(layer=GRU(HIDDEN_SIZE, return_sequences=True), merge_mode='concat', input_shape=INPUT_SHAPE))
-model.add(Dropout(0.3))
-model.add(Bidirectional(layer=GRU(HIDDEN_SIZE, return_sequences=True), merge_mode='concat'))
-model.add(Dropout(0.3))
-model.add(Attention(units=2*HIDDEN_SIZE, activation='tanh'))
-model.add(Dense(units=VOCAB_SIZE, activation='softmax'))
-
-model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
-model.summary()
-
-model.save('my_model.h5')  # creates a HDF5 file 'my_model.h5'
-del model  # deletes the existing model
-
-# returns a compiled model
-# identical to the previous one
-model = load_model('my_model.h5',{"Attention":Attention})
-=======
-    HIDDEN_SIZE = 300
-    BATCH_SIZE = 32
-    VOCAB_SIZE = 10000
-    CONTEXT = 100
-    INPUT_SHAPE = (CONTEXT, VOCAB_SIZE)
-
     """
-    The deep attentive language model
+    The deep attentive language model 
     consists of a 2-layer bidirectional GRU
     with an attention mechanism for identifying
     the most informative words.
@@ -95,9 +63,15 @@ model = load_model('my_model.h5',{"Attention":Attention})
     model.add(Dropout(0.3))
     model.add(Bidirectional(layer=GRU(HIDDEN_SIZE, return_sequences=True), merge_mode='concat'))
     model.add(Dropout(0.3))
-    model.add(Attention(activation='tanh'))
+    model.add(Attention(units=2*HIDDEN_SIZE, activation='tanh'))
     model.add(Dense(units=VOCAB_SIZE, activation='softmax'))
 
     model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
     model.summary()
->>>>>>> c102c0c9d52467c42f39deff65b3b4821d418a35
+
+    model.save('my_model.h5')  # creates a HDF5 file 'my_model.h5'
+    del model  # deletes the existing model
+
+    # returns a compiled model
+    # identical to the previous one
+    model = load_model('my_model.h5',{"Attention":Attention})

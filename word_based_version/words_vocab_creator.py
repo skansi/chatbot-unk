@@ -2,8 +2,8 @@ import os
 import pickle
 from nltk.stem import WordNetLemmatizer
 
-ROOTDIR = '/home/prometej/Workspaces/PythonWorkspace/Resources/wikidump'
-DEST_L = '/home/prometej/Workspaces/PythonWorkspace/chatbot-unk/word_based_version/file_resources/words_lemmatized_vocab.pkl'
+ROOTDIR = '.'#'/home/prometej/Workspaces/PythonWorkspace/Resources/wikidump'
+DEST_L = './word_based_version/file_resources/words_lemmatized_vocab.pkl'
 
 lemmatizer = WordNetLemmatizer()
 words_lemma = {}
@@ -14,6 +14,8 @@ for subdir, dirs, files in os.walk(ROOTDIR):
     list_files = files
 
     for f in files:
+        if not str(f).endswith('txt'):
+            continue
         print('Working on file:', f)
         SOURCE = str(subdir) + '/' + str(f)
 
